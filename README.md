@@ -3,6 +3,7 @@
 ## Load song
 
 - **songUrl** : url of song to be loaded and analize for frequency and beat
+- **imagesSyncUrl**: url of json files that includes `{ start, url }[]` where url is json drawing
 
 ## Background
 
@@ -67,4 +68,4 @@
 
 ## Example
 
-http://localhost:5173/?songUrl=http%3A%2F%2Flocalhost%3A8080%2Fstorage%2Fsongs%2F150669a0-b71c-41df-86a7-bd07f3f72bc3
+http://localhost:8586/?songUrl=http%3A%2F%2Flocalhost%3A8585%2Fstorage%2F123-123%2Fsong.mp3&bgc=black&shape=box
