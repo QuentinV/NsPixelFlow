@@ -3,6 +3,7 @@ import ReactiveParticlesManager from './managers/ReactiveParticlesManager'
 import BPMManager from './managers/BPMManager'
 import AudioManager from './managers/AudioManager'
 import MeshManager from './managers/MeshManager'
+import TitleManager from './managers/TitleManager'
 
 const setBackground = ({ backgroundImage, backgroundColor }) => {
   const body = document.querySelector('body');
@@ -54,9 +55,7 @@ const update = ({ particlesManager, audioManager, meshManager, renderer, scene, 
     renderer.render(scene, camera)
 }
 
-export const setupApp = async options => {
-    setBackground(options);
-
+const initializeWebgl = async (options) => {
     const renderer = setRenderer(options);
     const camera = getCamera(options);
 
@@ -76,6 +75,12 @@ export const setupApp = async options => {
     holder.add(particlesManager);
 
     await audioManager.loadAudioBuffer()
+    
+    if ( options.titleEnd ) {
+      audioManager.onEnded(() => {
+          (new TitleManager({ text: options.titleEnd })).show();
+      })
+    }
 
     bpmManager.addEventListener('beat', () => { 
         if (!audioManager.isPlaying) {
@@ -98,4 +103,17 @@ export const setupApp = async options => {
     if (options?.resize) {
         window.addEventListener('resize', () => resize({ camera, renderer }))
     }
+}
+
+export const setupApp = async options => {
+    setBackground(options);
+    if ( options?.title ) {
+        const titleManager = new TitleManager({ text: options.title });
+        titleManager.show();
+        titleManager.hideAfter(options.titleHide);
+    }
+
+    setTimeout(() => {
+      initializeWebgl(options)
+    }, options.songDelay);
 }

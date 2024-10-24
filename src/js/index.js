@@ -3,6 +3,10 @@ import { setupApp } from './App';
 (() => {
   const urlParams = new URLSearchParams(document.location.search);
   const options = {
+    title: urlParams.get('title'),
+    titleEnd: urlParams.get('titleEnd'),
+    titleHide: urlParams.get('titleHide') ?? 1000,
+    songDelay: urlParams.get('songDelay') ?? 0,
     imagesSyncUrl: urlParams.get('imgsUrl'),
     songUrl: urlParams.get('songUrl'),
     backgroundImage: urlParams.get('bgImg'),

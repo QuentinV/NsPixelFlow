@@ -202,3 +202,31 @@ html {
   .dg.ac {
     display: none;
   }
+
+  /* TITLE */
+  #title {
+    font-family: "Playwrite GB S", cursive;
+    font-optical-sizing: auto;
+    font-variant: small-caps;
+    line-height: 1.5;
+    
+    background-color: white;
+    color: blue;
+    border: solid 2px yellow;
+
+    position: fixed;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    
+    width: 75%;
+    min-height: 30px;
+    padding: 10px;
+    border-radius: 15px;
+    top: 25%;
+    left: 12.5%;
+
+    transform: rotate(-10deg);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }

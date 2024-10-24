@@ -4,6 +4,13 @@
 
 - **songUrl** : url of song to be loaded and analize for frequency and beat
 - **imagesSyncUrl**: url of json files that includes `{ start, url }[]` where url is json drawing
+- **songDelay**: delay loading of song (milliseconds)
+
+## Title start & end ##
+
+- **title**: display title on page loading
+- **titleHide**: amount of milliseconds when to hide title
+- **titleEnd**: Display title when song is over
 
 ## Background
 
@@ -68,4 +75,4 @@
 
 ## Example
 
-http://localhost:8586/?songUrl=http%3A%2F%2Flocalhost%3A8585%2Fstorage%2F123-123%2Fsong.mp3&bgc=black&shape=box
+http://localhost:8586/?songUrl=http%3A%2F%2Flocalhost%3A8585%2Fstorage%2F123-123%2Fsong.mp3&shape=box&title=The%20best%20song%20ever%20the%20lord%20of%20the%20rings&bgc=black&titleHide=10000&titleEnd=Thank%20you%20for%20watching%20!

@@ -52,6 +52,13 @@ export default class AudioManager {
     this.isPlaying = false
   }
 
+  onEnded(callback) {
+    this.audio.onEnded = () => {
+      this.isPlaying = false;
+      callback?.();
+    }
+  }
+
   collectAudioData() {
     this.frequencyArray = this.audioAnalyser.getFrequencyData()
   }
