@@ -2,6 +2,7 @@
 
 ## Load song
 
+- **startBtn**: whether or not to display a button to start the song. Required by broswer to have a user action.
 - **songUrl** : url of song to be loaded and analize for frequency and beat
 - **imagesSyncUrl**: url of json files that includes `{ start, url }[]` where url is json drawing
 - **songDelay**: delay loading of song (milliseconds)

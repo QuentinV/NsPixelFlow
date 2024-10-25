@@ -3,6 +3,7 @@ import { setupApp } from './App';
 (() => {
   const urlParams = new URLSearchParams(document.location.search);
   const options = {
+    startBtn: urlParams.get('startBtn') === 'true',
     title: urlParams.get('title'),
     titleEnd: urlParams.get('titleEnd'),
     titleHide: urlParams.get('titleHide') ?? 1000,

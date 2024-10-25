@@ -141,92 +141,106 @@ summary {
 }
 
 html {
-    box-sizing: border-box;
-    overflow-x: hidden;
-  
-    &.scroll {
-      overflow: visible;
-    }
-  }
-  
-  *,
-  *::after,
-  *::before {
-    box-sizing: border-box;
-  }
-  
-  :root {
-    font-size: 16px;
-    --color-text: #fffbf5;
-    --color-bg: #ff00007e;
-    --color-link: #fffbf5;
-    --color-link-hover: #fffbf5;
-  }
-  
-  body {
-    margin: 0;
-    color: var(--color-text);
-    font-family: 'degular', sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  body,
-  html {
-    width: 100%;
-    height: 100%;
-  }
-  
-  
-  @keyframes loaderAnim {
-    to {
-      opacity: 1;
-      transform: scale3d(0.5, 0.5, 1);
-    }
-  }
-  
-  body #cdawrap {
-    justify-self: start;
-  }
-  
-  .content {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  
-  .dg.ac {
-    display: none;
-  }
+  box-sizing: border-box;
+  overflow-x: hidden;
 
-  /* TITLE */
-  #title {
-    font-family: "Playwrite GB S", cursive;
-    font-optical-sizing: auto;
-    font-variant: small-caps;
-    line-height: 1.5;
-    
-    background-color: white;
-    color: blue;
-    border: solid 2px yellow;
-
-    position: fixed;
-    display: flex;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    
-    width: 75%;
-    min-height: 30px;
-    padding: 10px;
-    border-radius: 15px;
-    top: 25%;
-    left: 12.5%;
-
-    transform: rotate(-10deg);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  &.scroll {
+    overflow: visible;
   }
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 16px;
+  --color-text: #fffbf5;
+  --color-bg: #ff00007e;
+  --color-link: #fffbf5;
+  --color-link-hover: #fffbf5;
+}
+
+body {
+  margin: 0;
+  color: var(--color-text);
+  font-family: 'degular', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+html {
+  width: 100%;
+  height: 100%;
+}
+
+
+@keyframes loaderAnim {
+  to {
+    opacity: 1;
+    transform: scale3d(0.5, 0.5, 1);
+  }
+}
+
+body #cdawrap {
+  justify-self: start;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.dg.ac {
+  display: none;
+}
+
+#startBtn {
+  display: none;
+  color: black;
+  position: fixed;
+  width: 80%;
+  left: 10%;
+  top: 40%;
+  cursor: pointer;
+  z-index: 10;
+  font-variant: small-caps  ;
+  font-size: 16px;
+  padding: 15px 0 15px 0;
+}
+
+/* TITLE */
+#title {
+  font-family: "Playwrite GB S", cursive;
+  font-optical-sizing: auto;
+  font-variant: small-caps;
+  line-height: 1.5;
+  
+  background-color: white;
+  color: blue;
+  border: solid 2px yellow;
+
+  position: fixed;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  
+  width: 75%;
+  min-height: 30px;
+  padding: 10px;
+  border-radius: 15px;
+  top: 25%;
+  left: 12.5%;
+
+  transform: rotate(-10deg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

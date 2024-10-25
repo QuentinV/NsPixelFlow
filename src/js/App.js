@@ -105,8 +105,8 @@ const initializeWebgl = async (options) => {
     }
 }
 
-export const setupApp = async options => {
-    setBackground(options);
+const initialize = async options => {
+    document.getElementById('startBtn').style.display = 'none';
     if ( options?.title ) {
         const titleManager = new TitleManager({ text: options.title });
         titleManager.show();
@@ -114,6 +114,18 @@ export const setupApp = async options => {
     }
 
     setTimeout(() => {
-      initializeWebgl(options)
+        initializeWebgl(options)
     }, options.songDelay);
+}
+
+export const setupApp = async options => {
+    setBackground(options);
+    if ( options.startBtn ) {
+        document.getElementById('startBtn').onclick = () => {
+            initialize(options);
+        };
+        document.getElementById('startBtn').style.display = 'block';
+    } else {
+        initialize(options);
+    }
 }
