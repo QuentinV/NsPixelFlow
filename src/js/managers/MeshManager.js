@@ -31,14 +31,16 @@ export default class MeshManager {
         this.containerObject = containerObject;
         this.holderObjects = this.containerObject.getHolderObjects();
 
-        this.properties.k = 1;
+        this.properties.k = 0;
         this.morphProgress = 0;
         this.morphTimeout = null;
         this.objects = [null, null];
 
         if ( this.properties.imagesSyncUrl ) {
             console.log('imagesSyncUrl', this.properties.imagesSyncUrl)
-            this.imagesSync = await loadImagesSync({ url: this.properties.imagesSyncUrl });
+            this.imagesSync = await this.loadImagesSync({ url: this.properties.imagesSyncUrl });
+        } else {
+            await this.nextMesh(this.options.shape);
         }
     }
 
@@ -54,53 +56,60 @@ export default class MeshManager {
 
     async loadImagesSync({ url }) {
         // { images: { start: number; url: string }[] } 
-        const images = (await fetch(url)).json();
+        const host = url.substring(0, url.lastIndexOf('/') + 1);
+        const images = await (await fetch(url)).json();
+
+        this.properties.drawings = [];
+        const promises = images.map( v => fetch(host + v.url).then( res => res.json()));
+        this.properties.drawings = await Promise.all(promises);
+        console.log('prefetch drawing done')
+
         let index = 0;
         let loading = false;
 
-        this.properties.drawings[0] = (await fetch('http://localhost:8080/storage/')).json();
-
-        setInterval(async () => {
-          if (loading || !this.audioManager.isPlaying) return;
-          const currentTime = this.audioManager.audi.context.currentTime;
-          if ( images[index].start >= currentTime ) {
-            if ( index+1 < images.length ) {
-                // prefetch next image for smooth transition
-                fetch(images[index+1].url).then( async res => {
-                    this.properties.drawings[index+1] = (await res.json()).contours;
-                });
-            }      
-            await this.nextMesh('drawing');
-          }
-        }, 100);
+        setInterval(() => {
+            if (loading || !this.audioManager.isPlaying || index >= images.length) return;
+            const currentTime = this.audioManager.audio.context.currentTime;
+            if ( currentTime >= images[index].start ) {
+                //console.log('swap', currentTime, images[index].start, index)
+                this.nextMesh('drawing');
+                index++;
+            }
+        }, 20);
     }
 
     async nextMesh(shape) {
         //console.log('next mesh');
-
-        this.holderObjects?.clear();
+        this.holderObjects.clear();
 
         let MeshCla = meshes[shape]?.();
         if ( !MeshCla ) MeshCla = meshes.default?.();
 
-        const mesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options: this.properties });
-        await mesh.create();
+        let mesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options: this.properties });
+        await mesh.create(this.properties.k);
     
-        if ( shape === 'drawing' && !this.properties.k ) {
-            const nextContours = mesh.getContours();
+        if ( shape === 'drawing' ) {
+            if ( this.properties.k > 0 ) {
+                const nextContours = mesh.getContours();
 
-            this.objects[0] = await this.objects[0].adjustTo(nextContours);
-            this.objects[1] = nextMesh;
-            nextMesh = this.objects[0];
+                let oldMesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options: this.properties });
+                oldMesh.create(this.properties.k - 1, nextContours);
+
+                this.objects[0] = oldMesh;
+                this.objects[1] = mesh;
+                mesh = this.objects[0];
+            } else {
+                this.objects[0] = mesh;
+            }  
 
             this.properties.k++;
         }
         
-        mesh.initPosition();
+        mesh?.initPosition();
 
-        this.holderObjects.add(mesh);
+        this.holderObjects.add(mesh);  
 
-        if ( shape === 'drawing' ) {
+        if ( shape === 'drawing' && this.properties.k-1 > 0 ) {
             this.animateMorph = true;
         }
     }
@@ -143,7 +152,7 @@ export default class MeshManager {
             shape1.geometry.attributes.position.needsUpdate = true;
           });  
         } else {
-          console.log('morph done');
+          //console.log('morph done');
     
           this.animateMorph = false;
           this.morphProgress = 0;
@@ -160,7 +169,7 @@ export default class MeshManager {
             this.morphTimeout = setTimeout(() => {
               this.updateMorph();
               this.morphTimeout = null;
-            }, 500 );
+            }, 24 );
         }
     }    
 }

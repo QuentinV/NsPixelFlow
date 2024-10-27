@@ -6,6 +6,7 @@ export default class DrawingMesh extends THREE.Object3D {
         super()
         this.options = options;
         this.material = containerObject.getMaterial();
+        this.containerObject = containerObject;
     }
 
     createDrawing(contours, nextContours) {
@@ -58,7 +59,7 @@ export default class DrawingMesh extends THREE.Object3D {
         });
     
         if (nextContours) {
-          const nextContours = nextContours
+            nextContours = nextContours
                 .filter( c => c.length > 0 )
                 .map( cp => cp.map(point => {
                     const adjustedX = (point.x - centerX) / 100;
@@ -66,34 +67,27 @@ export default class DrawingMesh extends THREE.Object3D {
                     return new THREE.Vector3(adjustedX, adjustedY, 0);
                 }) );
     
-          convertedContours = convertedContours.map((cp, index) => {
-              const targetCount = nextContours[index]?.length; 
-              return targetCount ? this.resamplePoints(cp, targetCount) : null;
-          }).filter( cp => !!cp );
+            convertedContours = convertedContours.map((cp, index) => {
+                const targetCount = nextContours[index]?.length; 
+                return targetCount ? this.resamplePoints(cp, targetCount) : null;
+            }).filter( cp => !!cp );
         }
-    
-        // Create a container for the points mesh and set its orientation
-        const object = new THREE.Object3D()
-    
+        
         // Create a points mesh using the box geometry and the shader material
         convertedContours.forEach( convertedContour => {
-          const shape = new THREE.Shape(convertedContour);
-          const geometry = new THREE.ShapeGeometry(shape);
-          const pointsMesh = new THREE.Points(geometry, this.material)
-          object.add(pointsMesh)
+            const shape = new THREE.Shape(convertedContour);
+            const geometry = new THREE.ShapeGeometry(shape);
+            const pointsMesh = new THREE.Points(geometry, this.material)
+            this.add(pointsMesh)
         })
     
-        return object;
+        return this;
     }
 
-    create() {
+    create(k, nextContours) {
         this.material.uniforms.offsetSize.value = Math.floor(30)//THREE.MathUtils.randInt(30, 60))
         this.material.needsUpdate = true;
-        return this.createDrawing(this.properties.drawings[this.options.k]);
-    }
-
-    adjustTo(nextContours) {
-        return this.createDrawing(this.contours, nextContours);
+        return this.createDrawing(this.options.drawings[k], nextContours);
     }
 
     resamplePoints(points, targetCount) {
@@ -135,6 +129,10 @@ export default class DrawingMesh extends THREE.Object3D {
             z: 9,
             ease: 'elastic.out(0.8)', // Elastic ease-out for a bouncy effect
         });
+    }
+
+    getContours() {
+        return this.contours;
     }
 
 }

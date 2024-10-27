@@ -93,7 +93,6 @@ const initializeWebgl = async (options) => {
 
     particlesManager.init()
     await meshManager.init({ containerObject: particlesManager })
-    await meshManager.nextMesh(options.shape);
 
     audioManager.play()
 
