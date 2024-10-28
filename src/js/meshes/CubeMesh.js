@@ -54,7 +54,7 @@ export default class CubeMesh extends THREE.Object3D {
     initPosition() {
         gsap.to(this.containerObject.position, {
             duration: 0.6,
-            z: 10, //THREE.MathUtils.randInt(9, 11), // Random depth positioning within a range
+            z: this.options.posZ ?? 10, //THREE.MathUtils.randInt(9, 11), // Random depth positioning within a range
             ease: 'elastic.out(0.8)', // Elastic ease-out for a bouncy effect
         })
     }

@@ -134,7 +134,7 @@ export default class DrawingMesh extends THREE.Object3D {
     initPosition() {
         gsap.to(this.containerObject.position, {
             duration: 0.6,
-            z: 9,
+            z: this.options.posZ ?? 9,
             ease: 'elastic.out(0.8)', // Elastic ease-out for a bouncy effect
         });
     }

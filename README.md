@@ -20,7 +20,7 @@
 
 ## Shape
 
-- **shape** : either "*cynlinder*" or "*box*" or "*random*"
+- **shape** : either "*cynlinder*" or "*box*" or "*random*" "*drawing*"
 
 ### Shape colors
 
@@ -28,6 +28,10 @@
 - **ec** : end color of shape lines
 
 ### Shape movements
+
+#### position
+
+- **z**: set zoom. If undefined use default
 
 #### Auto
 

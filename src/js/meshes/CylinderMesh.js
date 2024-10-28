@@ -37,11 +37,14 @@ export default class CylinderMesh extends THREE.Object3D {
 
     initPosition() {
         let rotY = 0
-        let posZ = THREE.MathUtils.randInt(9, 11)
-
-        if (Math.random() < 0.2) {
+        let posZ;
+        if ( this.options.posZ ) {
+            posZ = this.options.posZ;
+        } else if (Math.random() < 0.2) {
             rotY = Math.PI / 2
             posZ = THREE.MathUtils.randInt(10, 11.5)
+        } else {
+            posZ = THREE.MathUtils.randInt(9, 11)
         }
 
         gsap.to(this.containerObject.getHolderObjects().rotation, {

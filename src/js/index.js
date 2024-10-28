@@ -34,6 +34,7 @@ import { setupApp } from './App';
     radialMin: urlParams.get('rMin'),
     radialMax: urlParams.get('rMax'),
     maxFreqValue: urlParams.get('fMax'),
+    posZ: urlParams.get('z'),
     shape: urlParams.get('shape') || 'random',
     resize: urlParams.get('resize') === 'true'
   };
