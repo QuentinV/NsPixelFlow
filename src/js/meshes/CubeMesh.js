@@ -8,6 +8,7 @@ export default class CubeMesh extends THREE.Object3D {
         this.material = containerObject.getMaterial();
 
         this.properties = {
+            posZ: options.posZ,
             keepRotate: options.keepRotate,
             rotateDuration: options.rotateDuration,
             rotateYoyo: options.rotateYoyo,
@@ -54,7 +55,7 @@ export default class CubeMesh extends THREE.Object3D {
     initPosition() {
         gsap.to(this.containerObject.position, {
             duration: 0.6,
-            z: this.options.posZ ?? 10, //THREE.MathUtils.randInt(9, 11), // Random depth positioning within a range
+            z: this.properties.posZ ?? 10, //THREE.MathUtils.randInt(9, 11), // Random depth positioning within a range
             ease: 'elastic.out(0.8)', // Elastic ease-out for a bouncy effect
         })
     }

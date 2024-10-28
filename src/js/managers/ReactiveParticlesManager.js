@@ -15,7 +15,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
       startColor: opts.startColor || 0xffffff,
       endColor: opts.endColor || 0x00ffff,
       autoRotate: opts.autoRotate ?? true,
-      maxFreqValue: opts.fMax || 1,
+      maxFreqValue: opts.fMax || 3,
       animateFrequency: true
     }  
   }

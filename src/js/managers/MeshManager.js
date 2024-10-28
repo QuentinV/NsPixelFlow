@@ -40,7 +40,7 @@ export default class MeshManager {
             console.log('imagesSyncUrl', this.properties.imagesSyncUrl)
             this.imagesSync = await this.loadImagesSync({ url: this.properties.imagesSyncUrl });
         } else {
-            await this.nextMesh(this.options.shape);
+            await this.nextMesh(this.properties.shape);
         }
     }
 

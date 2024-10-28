@@ -8,6 +8,7 @@ export default class CylinderMesh extends THREE.Object3D {
         this.containerObject = containerObject;
 
         this.properties = {
+            posZ: options.posZ,
             heightMin: options.h || options.hMin,
             heightMax: options.h || options.hMax,
             radialMin: options.r || options.rMin,
@@ -38,8 +39,8 @@ export default class CylinderMesh extends THREE.Object3D {
     initPosition() {
         let rotY = 0
         let posZ;
-        if ( this.options.posZ ) {
-            posZ = this.options.posZ;
+        if ( this.properties.posZ ) {
+            posZ = this.properties.posZ;
         } else if (Math.random() < 0.2) {
             rotY = Math.PI / 2
             posZ = THREE.MathUtils.randInt(10, 11.5)
