@@ -7,7 +7,7 @@ const meshes = {
     box: () => CubeMesh,
     cylinder: () => CylinderMesh,
     random: () => Math.random() < 0.5 ? CubeMesh : CylinderMesh,
-    'default': () =>CubeMesh
+    'default': () => CubeMesh
 }
 
 export default class MeshManager {
@@ -70,7 +70,7 @@ export default class MeshManager {
         setInterval(() => {
             if (loading || !this.audioManager.isPlaying || index >= images.length) return;
             const currentTime = this.audioManager.audio.context.currentTime;
-            if ( currentTime >= images[index].start ) {
+            if ( currentTime >= images[index].start + 0.5 ) {
                 //console.log('swap', currentTime, images[index].start, index)
                 this.nextMesh('drawing');
                 index++;

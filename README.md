@@ -42,6 +42,10 @@
 
 ### Shape size
 
+#### Increase shape details by increasing points count
+
+- **incd**: multiplier to increase points count
+
 #### Width box
 
 - **w**: fixed width (replace wMin & wMax)

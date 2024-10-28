@@ -15,7 +15,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
       startColor: opts.startColor || 0xffffff,
       endColor: opts.endColor || 0x00ffff,
       autoRotate: opts.autoRotate ?? true,
-      maxFreqValue: opts.fMax,
+      maxFreqValue: opts.fMax || 1,
       animateFrequency: true
     }  
   }
@@ -77,7 +77,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
       // Animate the frequency uniform in the material, syncing with BPM if available
       gsap.to(this.material.uniforms.frequency, {
         duration: this.bpmManager ? (this.bpmManager.getBPMDuration() / 1000) * 2 : 2,
-        value: THREE.MathUtils.randFloat(0.5, this.properties.maxFreqValue || 3), // Random frequency value for dynamic visual changes
+        value: THREE.MathUtils.randFloat(0.5, this.properties.maxFreqValue), // Random frequency value for dynamic visual changes
         ease: 'expo.easeInOut', // Smooth exponential transition for visual effect
       })
     }

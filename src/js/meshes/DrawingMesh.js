@@ -49,7 +49,7 @@ export default class DrawingMesh extends THREE.Object3D {
             }
           } 
         }   
-    
+        
         let convertedContours = contours.map((cp) => {
           return cp.map(point => {
               const adjustedX = (point.x - centerX) / 100;
@@ -57,7 +57,11 @@ export default class DrawingMesh extends THREE.Object3D {
               return new THREE.Vector3(adjustedX, adjustedY, 0);
           });
         });
-    
+        
+        if (this.options.increaseDetails) {
+            convertedContours = convertedContours.map(cp => this.resamplePoints(cp, cp.length * this.options.increaseDetails));
+        }
+
         if (nextContours) {
             nextContours = nextContours
                 .filter( c => c.length > 0 )
@@ -66,6 +70,10 @@ export default class DrawingMesh extends THREE.Object3D {
                     const adjustedY = -(point.y - centerY) / 100;
                     return new THREE.Vector3(adjustedX, adjustedY, 0);
                 }) );
+
+            if (this.options.increaseDetails) {
+                nextContours = nextContours.map(cp => this.resamplePoints(cp, cp.length * this.options.increaseDetails));
+            }
     
             convertedContours = convertedContours.map((cp, index) => {
                 const targetCount = nextContours[index]?.length; 

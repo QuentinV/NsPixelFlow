@@ -12,6 +12,7 @@ import { setupApp } from './App';
     songUrl: urlParams.get('songUrl'),
     backgroundImage: urlParams.get('bgImg'),
     backgroundColor: urlParams.get('bgc'),
+    increaseDetails: urlParams.get('incd') ?? 0,
     startColor: urlParams.get('sc'),
     endColor: urlParams.get('ec'),
     autoMix: urlParams.get('am') ? urlParams.get('am') === 'true' : undefined,
