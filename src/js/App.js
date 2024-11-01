@@ -1,9 +1,7 @@
-import * as THREE from 'three'
-import ReactiveParticlesManager from './managers/ReactiveParticlesManager'
 import BPMManager from './managers/BPMManager'
 import AudioManager from './managers/AudioManager'
-import MeshManager from './managers/MeshManager'
 import TitleManager from './managers/TitleManager'
+import WebglManager from './managers/WebglManager'
 
 const setBackground = ({ backgroundImage, backgroundColor }) => {
   const body = document.querySelector('body');
@@ -15,93 +13,75 @@ const setBackground = ({ backgroundImage, backgroundColor }) => {
   }
 }
 
-const setRenderer = options => {
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-    })
-
-    renderer.setClearColor(0x000000, 0)
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    renderer.autoClear = false
-    document.querySelector('.content').appendChild(renderer.domElement)
-
-    return renderer;
+const createContainer = ({ viewWidth, viewHeight }) => {
+    const div = document.createElement('div');
+    div.style.width = viewWidth || '100%';
+    div.style.height = viewHeight || '100%';
+    div.style.margin = 'auto';
+    return div;
 }
 
-const getCamera = options => {
-  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10000)
-  camera.position.z = 12
-  camera.frustumCulled = false
-  return camera;
-}
+const initializeWebgls = async (options) => {
+    const bpmManager = new BPMManager();
+    const audioManager = new AudioManager(options);
 
-const resize = ({ camera, renderer }) => {
-    const width = window.innerWidth
-    const height = window.innerHeight
-
-    camera.aspect = width / height
-    camera.updateProjectionMatrix()
-    renderer.setSize(width, height)
-}
-
-const update = ({ particlesManager, audioManager, meshManager, renderer, scene, camera }) => {
-    requestAnimationFrame(() => update({ particlesManager, meshManager, audioManager, renderer, scene, camera }))
-
-    meshManager?.update()
-    particlesManager?.update()
-    audioManager.update()
-
-    renderer.render(scene, camera)
-}
-
-const initializeWebgl = async (options) => {
-    const renderer = setRenderer(options);
-    const camera = getCamera(options);
-
-    const scene = new THREE.Scene()
-    scene.add(camera)
-
-    const holder = new THREE.Object3D()
-    holder.name = 'holder'
-    scene.add(holder)
-    holder.sortObjects = false
-
-    const bpmManager = new BPMManager()
-    const audioManager = new AudioManager(options)
-    const meshManager = new MeshManager({ audioManager, options });
-    const particlesManager = new ReactiveParticlesManager(audioManager, bpmManager, options)
-
-    holder.add(particlesManager);
-
-    await audioManager.loadAudioBuffer()
-    
+    await audioManager.loadAudioBuffer();
     if ( options.titleEnd ) {
-      audioManager.onEnded(() => {
-          (new TitleManager({ text: options.titleEnd })).show();
-      })
+        audioManager.onEnded(() => {
+            (new TitleManager({ text: options.titleEnd })).show();
+        })
     }
-
-    bpmManager.addEventListener('beat', () => { 
-        if (!audioManager.isPlaying) {
-            return;
-        }
-        meshManager.onBPMBeat();
-        particlesManager.onBPMBeat();
-    })
     await bpmManager.detectBPM(audioManager.audio.buffer)
 
-    particlesManager.init()
-    await meshManager.init({ containerObject: particlesManager })
+    const instancesCount = options.shape?.length ? options.shape.length : 1;
+    const instances = [];
 
+    for( let i = 0; i < instancesCount; ++i ) {   
+        const rootElement = createContainer({ viewHeight: options.viewHeight[i], viewWidth: options.viewWidth[i] });
+        document.getElementById('content').append(rootElement);
+        const instance = new WebglManager({ rootElement, audioManager, bpmManager, options: {
+            ...options,
+            shape: options.shape[i] || 'random',
+            increaseDetails: options.increaseDetails[i] || 0,
+            startColor: options.startColor[i],
+            endColor: options.endColor[i],
+            autoMix: options.autoMix[i] ? options.autoMix[i] === 'true' : undefined,
+            autoRotate: options.autoRotate[i] ? options.autoRotate[i] === 'true' : undefined,
+            autoNext: options.autoNext[i] ? options.autoNext[i] === 'true' : undefined,
+            keepRotate: options.keepRotate[i] === 'true',
+            rotateDuration: options.rotateDuration[i],
+            rotateYoyo: options.rotateYoyo[i],
+            w: options.w[i],
+            wMin: options.wMin[i],
+            wMax: options.wMax[i],
+            h: options.h[i],
+            hMin: options.hMin[i],
+            hMax: options.hMax[i],
+            d: options.d[i],
+            dMin: options.dMin[i],
+            dMax: options.dMax[i],
+            radial: options.radial[i],
+            radialMin: options.radialMin[i],
+            radialMax: options.radialMax[i],
+            posZ: options.posZ[i]
+        } });
+        await instance.init();
+        instance.resize();
+        instances.push(instance);
+    }   
+    
     audioManager.play()
-
-    update({ particlesManager, audioManager, meshManager, renderer, scene, camera });
-    resize({ camera, renderer });
+    update({ audioManager, instances });
 
     if (options?.resize) {
-        window.addEventListener('resize', () => resize({ camera, renderer }))
+        window.addEventListener('resize', () => instances.forEach( i => i.resize() ));
     }
+}
+
+const update = ({ audioManager, instances }) => {
+    requestAnimationFrame(() => update({ audioManager, instances }))
+    audioManager.update()
+    instances.forEach( i => i.update());
 }
 
 const initialize = async options => {
@@ -113,7 +93,7 @@ const initialize = async options => {
     }
 
     setTimeout(() => {
-        initializeWebgl(options)
+        initializeWebgls(options)
     }, options.songDelay);
 }
 
