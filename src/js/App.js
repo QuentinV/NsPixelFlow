@@ -2,6 +2,7 @@ import BPMManager from './managers/BPMManager'
 import AudioManager from './managers/AudioManager'
 import TitleManager from './managers/TitleManager'
 import WebglManager from './managers/WebglManager'
+import DesignerManager from './managers/DesignerManager'
 
 const setBackground = ({ backgroundImage, backgroundColor }) => {
   const body = document.querySelector('body');
@@ -98,6 +99,11 @@ const initialize = async options => {
 }
 
 export const setupApp = async options => {
+    if ( localStorage.getItem("designer") === "true") {
+        const designer = new DesignerManager({ id: 'designer', options });
+        designer.build();
+    }
+
     setBackground(options);
     if ( options.startBtn ) {
         document.getElementById('startBtn').onclick = () => {
