@@ -46,7 +46,7 @@ export default class MeshManager {
 
     onBPMBeat() {
         if (this.properties.autoMix && Math.random() < 0.1) {
-            this.nextMesh('random');
+            this.nextMesh(this.properties.shape);
         }
 
         if ( this.properties.autoNext && !this.properties.imagesSyncUrl ) {
