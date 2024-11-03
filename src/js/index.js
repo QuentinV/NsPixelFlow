@@ -15,6 +15,8 @@ import { setupApp } from './App';
 
     backgroundImage: urlParams.get('bgImg'),
     backgroundColor: urlParams.get('bgc'),
+    glitch: urlParams.get('glitch') === 'true',
+    cornersPulse: urlParams.get('cp') === 'true',
     resize: urlParams.get('resize') === 'true',
     maxFreqValue: urlParams.get('fMax'),
     

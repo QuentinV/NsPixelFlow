@@ -4,13 +4,29 @@ import TitleManager from './managers/TitleManager'
 import WebglManager from './managers/WebglManager'
 import DesignerManager from './managers/DesignerManager'
 
-const setBackground = ({ backgroundImage, backgroundColor }) => {
+const setBackground = ({ backgroundImage, backgroundColor, backgroundStartColor, backgroundEndColor, glitch, cornersPulse }) => {
   const body = document.querySelector('body');
   if ( backgroundImage ) {
     body.style.background = `url('${backgroundImage}') center no-repeat cover`;
   }
+
   if ( backgroundColor ) {
     body.style.backgroundColor = backgroundColor;
+  }
+
+  if ( backgroundStartColor && backgroundEndColor ) {
+    // #000022, #0f1a44
+    const background = document.getElementById('background');
+    background.style.background = `linear-gradient(to bottom, ${backgroundStartColor}, ${backgroundEndColor})`;
+    background.style.display = "block";
+  }
+
+  if ( glitch ) {
+    document.querySelector('.glitch').style.display = 'block';
+  }
+  
+  if ( cornersPulse ) {
+    document.querySelector('.corners').style.display = 'block';
   }
 }
 
