@@ -23,6 +23,8 @@ const createContainer = ({ viewWidth, viewHeight }) => {
 }
 
 const initializeWebgls = async (options) => {
+    const initTime = Date.now();
+
     const bpmManager = new BPMManager();
     const audioManager = new AudioManager(options);
 
@@ -32,6 +34,11 @@ const initializeWebgls = async (options) => {
             (new TitleManager({ text: options.titleEnd })).show();
         })
     }
+    audioManager.onEnded(() => {
+        setTimeout(() => {
+            document.body.dispatchEvent(new Event('musicEnded'));
+        }, 5000);
+    })
     await bpmManager.detectBPM(audioManager.audio.buffer)
 
     const instancesCount = options.shape?.length ? options.shape.length : 1;
@@ -72,6 +79,10 @@ const initializeWebgls = async (options) => {
     }   
     
     audioManager.play()
+    const musicStartTime = Date.now() - initTime;
+    console.log('music started after', musicStartTime);
+    document.body.dispatchEvent(new CustomEvent('musicStarted', { detail: { musicStartTime } }))
+
     update({ audioManager, instances });
 
     if (options?.resize) {
