@@ -4,7 +4,7 @@ import TitleManager from './managers/TitleManager'
 import WebglManager from './managers/WebglManager'
 import DesignerManager from './managers/DesignerManager'
 
-const setBackground = ({ backgroundImage, backgroundColor, backgroundStartColor, backgroundEndColor, glitch, cornersPulse }) => {
+const setBackground = ({ backgroundImage, backgroundColor, backgroundStartColor, backgroundEndColor, glitch, glitchPortrait, cornersPulse }) => {
   const body = document.querySelector('body');
   if ( backgroundImage ) {
     body.style.background = `url('${backgroundImage}') center no-repeat cover`;
@@ -22,7 +22,12 @@ const setBackground = ({ backgroundImage, backgroundColor, backgroundStartColor,
   }
 
   if ( glitch ) {
-    document.querySelector('.glitch').style.display = 'block';
+    const glitch = document.querySelector('.glitch');
+    glitch.style.display = 'block';
+    if ( glitchPortrait ) {
+        glitch.classList.add('glitch-portrait');
+    }
+    
   }
   
   if ( cornersPulse ) {

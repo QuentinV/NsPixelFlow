@@ -9,6 +9,7 @@ html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  position: relative;
 }
 
 html {
@@ -17,8 +18,8 @@ html {
 
 :root {
   font-size: 16px;
-  --corner-size: 300px;
-  --corner-size-neg: -300px;
+  --corner-size: 75px;
+  --corner-size-neg: -75px;
   --corner-pulse-time: 20s;
   --glitch-rotate: -60deg;
   --glitch-bouncy-size: 75px;
@@ -111,6 +112,13 @@ canvas {
     clip-path: inset(0% 0% 3% 0%);
     transform: translate(var(--glitch-bouncy-size), var(--glitch-bouncy-size-neg)) rotate(var(--glitch-rotate));
   }
+}
+
+.glitch-portrait {
+  top: 5%;
+  left: 10%;
+  width: 85%;
+  height: 100%;
 }
 
 /* Corners pulse effect */
