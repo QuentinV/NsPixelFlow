@@ -69,6 +69,9 @@ const initializeWebgls = async (options) => {
         document.getElementById('content').append(rootElement);
         const instance = new WebglManager({ rootElement, audioManager, bpmManager, options: {
             ...options,
+            text: options.text[i],
+            effect: options.effect[i],
+            fadeOutTimer: options.fadeOutTimer[i],
             shape: options.shape[i] || 'random',
             increaseDetails: options.increaseDetails[i] || 0,
             startColor: options.startColor[i],

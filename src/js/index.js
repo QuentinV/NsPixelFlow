@@ -23,6 +23,7 @@ import { setupApp } from './App';
     
     effect: urlParams.getAll('effect'),
     text: urlParams.getAll('text'),
+    fadeOutTimer: urlParams.getAll('fadeOut'),
     increaseDetails: urlParams.getAll('incd'),
     startColor: urlParams.getAll('sc'),
     endColor: urlParams.getAll('ec'),

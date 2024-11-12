@@ -22,7 +22,8 @@ export default class TextMesh extends THREE.Object3D {
             effect: options.effect || 'matrix',
             font: options.font || 'helvetiker_regular',
             text: options.text || 'Hello, Quentin!',
-            debug: !!options.debug
+            debug: !!options.debug,
+            fadeOutTimer: options.fadeOutTimer || 2000
         }
 
         this.position.z = -500;
@@ -65,7 +66,7 @@ export default class TextMesh extends THREE.Object3D {
                     this.add(debugPoints);
                 }
 
-                this.effect = new effects[this.properties.effect]({ points });
+                this.effect = new effects[this.properties.effect]({ points, fadeOutTimer: this.properties.fadeOutTimer });
                 this.add(this.effect.init());
 
                 res(this);
