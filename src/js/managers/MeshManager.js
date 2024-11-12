@@ -1,12 +1,14 @@
 import CubeMesh from "../meshes/CubeMesh";
 import CylinderMesh from "../meshes/CylinderMesh";
 import DrawingMesh from "../meshes/DrawingMesh";
+import TextMesh from "../meshes/TextMesh";
 
 const meshes = {
     drawing: () => DrawingMesh,
     box: () => CubeMesh,
     cylinder: () => CylinderMesh,
     random: () => Math.random() < 0.5 ? CubeMesh : CylinderMesh,
+    text: () => TextMesh,
     'default': () => CubeMesh
 }
 
@@ -103,6 +105,8 @@ export default class MeshManager {
             }  
 
             this.properties.k++;
+        } else {
+            this.objects[0] = mesh;
         }
         
         mesh?.initPosition();
@@ -165,6 +169,10 @@ export default class MeshManager {
     }
 
     update() {
+        if ( typeof this.objects[0]?.animate === "function" ) {
+            this.objects[0].animate();
+        }
+        
         if ( this.animateMorph && !this.morphTimeout ) {
             this.morphTimeout = setTimeout(() => {
               this.updateMorph();

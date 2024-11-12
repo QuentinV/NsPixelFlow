@@ -26,8 +26,7 @@ const setBackground = ({ backgroundImage, backgroundColor, backgroundStartColor,
     glitch.style.display = 'block';
     if ( glitchPortrait ) {
         glitch.classList.add('glitch-portrait');
-    }
-    
+    } 
   }
   
   if ( cornersPulse ) {

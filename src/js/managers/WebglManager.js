@@ -18,15 +18,15 @@ export default class WebGLRenderer {
         this.scene = new THREE.Scene()
         this.scene.add(this.camera)
 
-        const holder = new THREE.Object3D()
-        holder.name = 'holder'
-        this.scene.add(holder)
-        holder.sortObjects = false
+        this.holder = new THREE.Object3D()
+        this.holder.name = 'holder'
+        this.scene.add(this.holder)
+        this.holder.sortObjects = false
 
         this.meshManager = new MeshManager({ audioManager: this.audioManager, options: this.options });
         this.particlesManager = new ReactiveParticlesManager(this.audioManager, this.bpmManager, this.options)
 
-        holder.add(this.particlesManager);
+        this.holder.add(this.particlesManager);
 
         this.bpmManager.addEventListener('beat', () => { 
             if (!this.audioManager.isPlaying) {
@@ -39,10 +39,9 @@ export default class WebGLRenderer {
         this.particlesManager.init()
         await this.meshManager.init({ containerObject: this.particlesManager })
 
-        return { holder, renderer: this.renderer, camera: this.camera };
+        return { holder: this.holder, renderer: this.renderer, camera: this.camera };
     }
 
-    
     _getRenderer() {
         const renderer = new THREE.WebGLRenderer({
             antialias: true,

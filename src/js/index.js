@@ -21,6 +21,8 @@ import { setupApp } from './App';
     resize: urlParams.get('resize') === 'true',
     maxFreqValue: urlParams.get('fMax'),
     
+    effect: urlParams.getAll('effect'),
+    text: urlParams.getAll('text'),
     increaseDetails: urlParams.getAll('incd'),
     startColor: urlParams.getAll('sc'),
     endColor: urlParams.getAll('ec'),
