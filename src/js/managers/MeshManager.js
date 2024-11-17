@@ -46,6 +46,7 @@ export default class MeshManager {
 
         if ( this.properties.imageUrl ) {
             this.properties.drawings = [ await (await fetch(this.properties.imageUrl)).json() ];
+            await this.nextMesh('drawing');
         } else if ( this.properties.imagesSyncUrl ) {
             this.imagesSync = await this.loadImagesSync({ url: this.properties.imagesSyncUrl });
         } else {
