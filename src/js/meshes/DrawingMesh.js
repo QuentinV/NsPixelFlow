@@ -7,6 +7,8 @@ export default class DrawingMesh extends THREE.Object3D {
         this.options = options;
         this.material = containerObject.getMaterial();
         this.containerObject = containerObject;
+
+        this.options.increaseDetails = this.options.increaseDetails ?? 0;
     }
 
     createDrawing(contours, nextContours) {

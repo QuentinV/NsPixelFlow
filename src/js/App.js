@@ -61,40 +61,15 @@ const initializeWebgls = async (options) => {
     })
     await bpmManager.detectBPM(audioManager.audio.buffer)
 
-    const instancesCount = options.shape?.length ? options.shape.length : 1;
     const instances = [];
 
-    for( let i = 0; i < instancesCount; ++i ) {   
-        const rootElement = createContainer({ viewHeight: options.viewHeight[i], viewWidth: options.viewWidth[i] });
+    for( let i = 0; i < options.views.length; ++i ) {   
+        const viewOption = options?.views?.[i] ?? {};
+        const rootElement = createContainer({ viewHeight: viewOption.viewHeight, viewWidth: viewOption.viewWidth });
         document.getElementById('content').append(rootElement);
         const instance = new WebglManager({ rootElement, audioManager, bpmManager, options: {
             ...options,
-            text: options.text[i],
-            effect: options.effect[i],
-            fadeOutTimer: options.fadeOutTimer[i],
-            shape: options.shape[i] || 'random',
-            increaseDetails: options.increaseDetails[i] || 0,
-            startColor: options.startColor[i],
-            endColor: options.endColor[i],
-            autoMix: options.autoMix[i] ? options.autoMix[i] === 'true' : undefined,
-            autoRotate: options.autoRotate[i] ? options.autoRotate[i] === 'true' : undefined,
-            autoNext: options.autoNext[i] ? options.autoNext[i] === 'true' : undefined,
-            keepRotate: options.keepRotate[i] === 'true',
-            rotateDuration: options.rotateDuration[i],
-            rotateYoyo: options.rotateYoyo[i],
-            w: options.w[i],
-            wMin: options.wMin[i],
-            wMax: options.wMax[i],
-            h: options.h[i],
-            hMin: options.hMin[i],
-            hMax: options.hMax[i],
-            d: options.d[i],
-            dMin: options.dMin[i],
-            dMax: options.dMax[i],
-            radial: options.radial[i],
-            radialMin: options.radialMin[i],
-            radialMax: options.radialMax[i],
-            posZ: options.posZ[i]
+            ...viewOption
         } });
         await instance.init();
         instance.resize();
@@ -124,12 +99,12 @@ const initialize = async options => {
     if ( options?.title ) {
         const titleManager = new TitleManager({ text: options.title });
         titleManager.show();
-        titleManager.hideAfter(options.titleHide);
+        titleManager.hideAfter(options.titleHide ?? 1000);
     }
 
     setTimeout(() => {
         initializeWebgls(options)
-    }, options.songDelay);
+    }, options.songDelay ?? 0);
 }
 
 export const setupApp = async options => {

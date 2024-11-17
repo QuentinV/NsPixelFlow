@@ -16,16 +16,22 @@ export default class MeshManager {
     constructor({ audioManager, options }) {
         this.audioManager = audioManager;
         this.properties = {
-            ...options,
+            ...options
+        };
+
+        this.properties.shape = options?.shape ?? 'random';
+
+        this.properties = {
+            ...this.properties,
+            imageUrl: options.imageUrl,
             imagesSyncUrl: options.imagesSyncUrl,
             drawings: options.drawings,
-            autoMix: (options.autoMix ?? true) || options.shape === 'random',
+            autoMix: (options.autoMix ?? true) || this.properties.shape === 'random',
             autoRotate: options.autoRotate ?? true,
             autoNext: options.autoNext ?? false,
             timerNext: 2000,
             keepRotate: options.keepRotate,
-            rotateDuration: options.rotateDuration,
-            shape: options.shape
+            rotateDuration: options.rotateDuration
         }
     }
 
@@ -38,8 +44,9 @@ export default class MeshManager {
         this.morphTimeout = null;
         this.objects = [null, null];
 
-        if ( this.properties.imagesSyncUrl ) {
-            console.log('imagesSyncUrl', this.properties.imagesSyncUrl)
+        if ( this.properties.imageUrl ) {
+            this.properties.drawings = [ await (await fetch(this.properties.imageUrl)).json() ];
+        } else if ( this.properties.imagesSyncUrl ) {
             this.imagesSync = await this.loadImagesSync({ url: this.properties.imagesSyncUrl });
         } else {
             await this.nextMesh(this.properties.shape);
@@ -57,7 +64,6 @@ export default class MeshManager {
     }
 
     async loadImagesSync({ url }) {
-        // { images: { start: number; url: string }[] } 
         const host = url.substring(0, url.lastIndexOf('/') + 1);
         const images = await (await fetch(url)).json();
 

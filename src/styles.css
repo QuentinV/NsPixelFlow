@@ -229,25 +229,18 @@ canvas {
   overflow: auto;
   display: none;
   position: absolute;
-  right: 0;
+  right: 5px;
   top: 0;
-  padding: 0 5px 0 10px;
   background: white;
   border: thin blue solid;
   z-index: 20;
   color: black;
   width: 350px;
+  padding: 5px;
 }
 
-#designer div {
-  padding: 5px 0;
-}
-
-#designer input[type="number"] {
-  width: 75px;
-}
-
-#designer .shapeOpts {
-  padding: 0 0 0 5px;
-  border: thin blue solid;
+#designer textarea {
+  width: calc( 100% - 10px );
+  height: 400px;
+  padding: 5px;
 }
