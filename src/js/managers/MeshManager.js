@@ -2,6 +2,7 @@ import CubeMesh from "../meshes/CubeMesh";
 import CylinderMesh from "../meshes/CylinderMesh";
 import DrawingMesh from "../meshes/DrawingMesh";
 import TextMesh from "../meshes/TextMesh";
+import * as THREE from 'three';
 
 const meshes = {
     drawing: () => DrawingMesh,
@@ -13,7 +14,7 @@ const meshes = {
 }
 
 export default class MeshManager {
-    constructor({ audioManager, options }) {
+    constructor({ audioManager, options, width, height }) {
         this.audioManager = audioManager;
         this.properties = {
             ...options
@@ -31,7 +32,10 @@ export default class MeshManager {
             autoNext: options.autoNext ?? false,
             timerNext: 2000,
             keepRotate: options.keepRotate,
-            rotateDuration: options.rotateDuration
+            rotateDuration: options.rotateDuration,
+            effect: options.effect,
+            width,
+            height
         }
     }
 
@@ -46,12 +50,32 @@ export default class MeshManager {
 
         if ( this.properties.imageUrl ) {
             this.properties.drawings = [ await (await fetch(this.properties.imageUrl)).json() ];
-            await this.nextMesh('drawing');
+            if ( this.properties.effect === "morphingBorder" ) {
+                const borders = this._createBorder(this.properties.width, this.properties.height);
+                this.properties.drawings = [ borders, this.properties.drawings[0] ];
+                await this.nextMesh('drawing');
+                setTimeout(() => this.nextMesh('drawing'), 1000 );
+            } else {
+                await this.nextMesh('drawing');
+            }
         } else if ( this.properties.imagesSyncUrl ) {
             this.imagesSync = await this.loadImagesSync({ url: this.properties.imagesSyncUrl });
         } else {
             await this.nextMesh(this.properties.shape);
         }
+    }
+
+    _createBorder(width, height) {
+        return [
+            [...[...Array(width)].map((v, i ) => ({x: i, y: -height})), { x: width, y: -height-1 }],
+            [...[...Array(width)].map((v, i ) => ({x: -i, y: -height})), { x: -width, y: -height-1 }],        
+            [...[...Array(width)].map((v, i ) => ({x: i, y: height})), { x: width, y: height-1 }],
+            [...[...Array(width)].map((v, i ) => ({x: -i, y: height})), { x: -width, y: height-1 }],
+            [...[...Array(height)].map((v, i ) => ({x: -width, y: i})), { x: -width-1, y: height }],
+            [...[...Array(height)].map((v, i ) => ({x: -width, y: -i})), { x: -width-1, y: -height }],
+            [...[...Array(height)].map((v, i ) => ({x: width, y: i})), { x: width-1, y: height }],
+            [...[...Array(height)].map((v, i ) => ({x: width, y: -i})), { x: width-1, y: -height }]
+        ]
     }
 
     onBPMBeat() {
@@ -71,7 +95,6 @@ export default class MeshManager {
         this.properties.drawings = [];
         const promises = images.map( v => fetch(host + v.url).then( res => res.json()));
         this.properties.drawings = await Promise.all(promises);
-        console.log('prefetch drawing done')
 
         let index = 0;
         let loading = false;

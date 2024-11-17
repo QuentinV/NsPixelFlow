@@ -23,7 +23,7 @@ export default class WebGLRenderer {
         this.scene.add(this.holder)
         this.holder.sortObjects = false
 
-        this.meshManager = new MeshManager({ audioManager: this.audioManager, options: this.options });
+        this.meshManager = new MeshManager({ audioManager: this.audioManager, options: this.options, width: this.rootElement.clientWidth, height: this.rootElement.clientHeight });
         this.particlesManager = new ReactiveParticlesManager(this.audioManager, this.bpmManager, this.options)
 
         this.holder.add(this.particlesManager);
