@@ -7,6 +7,7 @@ import { MatrixEffect } from '../effects/matrix';
 import { TornadoEffect } from '../effects/tornado';
 import { VortexEffect } from '../effects/vortex';
 import { MorphingEffect } from '../effects/morphing';
+import { BorderEffect } from "../effects/borderEffect";
 
 const meshes = {
     drawing: () => DrawingMesh,
@@ -22,7 +23,8 @@ const effects = {
     explosion: ExposionEffect,
     matrix: MatrixEffect,
     tornado: TornadoEffect,
-    vortex: VortexEffect
+    vortex: VortexEffect,
+    border: BorderEffect
 }
 
 export default class MeshManager {

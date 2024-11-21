@@ -15,9 +15,6 @@ export class ExposionEffect extends BaseEffect {
             vertices[i * 3 + 2] = (Math.random() - 0.5) * 2000;
         }
         this.particleGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-
-        const particleSystem = new THREE.Points(this.particleGeometry, this.material);
-        
-        return particleSystem;
+        return new THREE.Points(this.particleGeometry, this.material);
     }
 }
