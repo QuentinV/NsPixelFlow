@@ -9,6 +9,7 @@ export default class DrawingMesh extends THREE.Object3D {
         this.containerObject = containerObject;
 
         this.options.increaseDetails = this.options.increaseDetails ?? 0;
+        this.points = null;
     }
 
     createDrawing(contours, nextContours) {
@@ -82,16 +83,21 @@ export default class DrawingMesh extends THREE.Object3D {
                 return targetCount ? this.resamplePoints(cp, targetCount) : null;
             }).filter( cp => !!cp );
         }
-        
+
+        this.points = convertedContours.flatMap( c => c );
+        this.convertedContours = convertedContours;
+    
+        return this;
+    }
+
+    append() {
         // Create a points mesh using the box geometry and the shader material
-        convertedContours.forEach( convertedContour => {
+        this.convertedContours.forEach( convertedContour => {
             const shape = new THREE.Shape(convertedContour);
             const geometry = new THREE.ShapeGeometry(shape);
             const pointsMesh = new THREE.Points(geometry, this.material)
             this.add(pointsMesh)
         })
-    
-        return this;
     }
 
     create(k, nextContours) {
@@ -145,4 +151,7 @@ export default class DrawingMesh extends THREE.Object3D {
         return this.contours;
     }
 
+    getPoints() {
+        return this.points;
+    }
 }

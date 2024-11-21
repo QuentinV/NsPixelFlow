@@ -1,16 +1,5 @@
 import * as THREE from 'three'
-import { ExposionEffect } from '../effects/explosion';
-import { MatrixEffect } from '../effects/matrix';
-import { TornadoEffect } from '../effects/tornado';
-import { VortexEffect } from '../effects/vortex';
 import { FontLoader } from 'three/addons/loaders/FontLoader';
-
-const effects = {
-    explosion: ExposionEffect,
-    matrix: MatrixEffect,
-    tornado: TornadoEffect,
-    vortex: VortexEffect
-}
 
 export default class TextMesh extends THREE.Object3D {
     constructor({ audioManager, containerObject, options }) {
@@ -27,7 +16,7 @@ export default class TextMesh extends THREE.Object3D {
         }
 
         this.position.z = -500;
-        this.effect = null;
+        this.points = null;
     }
 
     create() {
@@ -57,6 +46,7 @@ export default class TextMesh extends THREE.Object3D {
                         });
                     });
                 });
+                this.points = points;
 
                 // Visualize initial points to debug
                 if ( this.properties.debug ) {
@@ -65,20 +55,17 @@ export default class TextMesh extends THREE.Object3D {
                     const debugPoints = new THREE.Points(debugGeometry, debugMaterial);
                     this.add(debugPoints);
                 }
-
-                this.effect = new effects[this.properties.effect]({ points, fadeOutTimer: this.properties.fadeOutTimer });
-                this.add(this.effect.init());
-
+                
                 res(this);
             });
         });
     }
 
-    initPosition() {
-        //
+    getPoints() {
+        return this.points;
     }
 
-    animate() {
-        this.effect.animate();
+    initPosition() {
+        //
     }
 }

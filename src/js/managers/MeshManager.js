@@ -2,6 +2,11 @@ import CubeMesh from "../meshes/CubeMesh";
 import CylinderMesh from "../meshes/CylinderMesh";
 import DrawingMesh from "../meshes/DrawingMesh";
 import TextMesh from "../meshes/TextMesh";
+import { ExposionEffect } from '../effects/explosion';
+import { MatrixEffect } from '../effects/matrix';
+import { TornadoEffect } from '../effects/tornado';
+import { VortexEffect } from '../effects/vortex';
+import { MorphingEffect } from '../effects/morphing';
 
 const meshes = {
     drawing: () => DrawingMesh,
@@ -10,6 +15,14 @@ const meshes = {
     random: () => Math.random() < 0.5 ? CubeMesh : CylinderMesh,
     text: () => TextMesh,
     'default': () => CubeMesh
+}
+
+const effects = {
+    morphing: MorphingEffect,
+    explosion: ExposionEffect,
+    matrix: MatrixEffect,
+    tornado: TornadoEffect,
+    vortex: VortexEffect
 }
 
 export default class MeshManager {
@@ -36,6 +49,8 @@ export default class MeshManager {
             width,
             height
         }
+
+        this.effect = null;
     }
 
     async init({ containerObject }) {
@@ -43,38 +58,16 @@ export default class MeshManager {
         this.holderObjects = this.containerObject.getHolderObjects();
 
         this.properties.k = 0;
-        this.morphProgress = 0;
-        this.morphTimeout = null;
         this.objects = [null, null];
 
         if ( this.properties.imageUrl ) {
             this.properties.drawings = [ await (await fetch(this.properties.imageUrl)).json() ];
-            if ( this.properties.effect === "morphingBorder" ) {
-                const borders = this._createBorder(this.properties.width, this.properties.height);
-                this.properties.drawings = [ borders, this.properties.drawings[0] ];
-                await this.nextMesh('drawing');
-                setTimeout(() => this.nextMesh('drawing'), 3000 );
-            } else {
-                await this.nextMesh('drawing');
-            }
+            await this.nextMesh('drawing');
         } else if ( this.properties.imagesSyncUrl ) {
             this.imagesSync = await this.loadImagesSync({ url: this.properties.imagesSyncUrl });
         } else {
             await this.nextMesh(this.properties.shape);
         }
-    }
-
-    _createBorder(width, height) {
-        return [
-            [...[...Array(width)].map((v, i ) => ({x: i, y: -height})), { x: width, y: -height-1 }],
-            [...[...Array(width)].map((v, i ) => ({x: -i, y: -height})), { x: -width, y: -height-1 }],        
-            [...[...Array(width)].map((v, i ) => ({x: i, y: height})), { x: width, y: height-1 }],
-            [...[...Array(width)].map((v, i ) => ({x: -i, y: height})), { x: -width, y: height-1 }],
-            [...[...Array(height)].map((v, i ) => ({x: -width, y: i})), { x: -width-1, y: height }],
-            [...[...Array(height)].map((v, i ) => ({x: -width, y: -i})), { x: -width-1, y: -height }],
-            [...[...Array(height)].map((v, i ) => ({x: width, y: i})), { x: width-1, y: height }],
-            [...[...Array(height)].map((v, i ) => ({x: width, y: -i})), { x: width-1, y: -height }]
-        ]
     }
 
     onBPMBeat() {
@@ -102,7 +95,6 @@ export default class MeshManager {
             if (loading || !this.audioManager.isPlaying || index >= images.length) return;
             const currentTime = this.audioManager.audio.context.currentTime;
             if ( currentTime >= images[index].start + 0.5 ) {
-                //console.log('swap', currentTime, images[index].start, index)
                 this.nextMesh('drawing');
                 index++;
             }
@@ -110,7 +102,6 @@ export default class MeshManager {
     }
 
     async nextMesh(shape) {
-        //console.log('next mesh');
         this.holderObjects.clear();
 
         let MeshCla = meshes[shape]?.();
@@ -118,13 +109,29 @@ export default class MeshManager {
 
         let mesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options: this.properties });
         await mesh.create(this.properties.k);
-    
-        if ( shape === 'drawing' ) {
+
+        let effect = null;
+        if ( this.properties.effect ) {
+            effect = new effects[this.properties.effect]({ 
+                points: mesh.getPoints(), 
+                width: this.properties.width, 
+                height: this.properties.height, 
+                containerObject: this.containerObject
+            });
+        }
+
+        if ( effect?.getType() === 'preload' ) {
+            mesh.add(effect.init());
+        } else if ( mesh.append ) {
+            mesh.append();
+        }
+
+        if ( effect?.getType() === 'transition' ) {
             if ( this.properties.k > 0 ) {
                 const nextContours = mesh.getContours();
 
                 let oldMesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options: this.properties });
-                oldMesh.create(this.properties.k - 1, nextContours);
+                await oldMesh.create(this.properties.k - 1, nextContours);
 
                 this.objects[0] = oldMesh;
                 this.objects[1] = mesh;
@@ -140,82 +147,25 @@ export default class MeshManager {
         
         mesh?.initPosition();
 
-        this.holderObjects.add(mesh);  
+        this.holderObjects.add(mesh); 
 
-        if ( shape === 'drawing' && this.properties.k-1 > 0 ) {
-            this.animateMorph = true;
-        }
-    }
-
-    updateMorph() {
-        if (!this.animateMorph) return;      
-
-        if ( this.morphProgress < 1 ) { 
-            this.morphProgress += 0.02;
-            const morphProgress = 3 * Math.pow(this.morphProgress, 2) - 2 * Math.pow(this.morphProgress, 3);
-            function interpolate(start, end) { 
-                return start * (1 - morphProgress) + end * morphProgress; 
-            } 
-
-            const shapesTarget = this.objects[1].children;
-            let k = 0;
-            let j = 0;
-
-            const getNextTargetPoints = () => {
-                if ( k >= shapesTarget.length ) {
-                    return null;
-                }
-                let pos = shapesTarget[k].geometry.attributes.position.array;
-                if ( j >= pos.length ) {
-                    j = 0; 
-                    k++;
-                    return getNextTargetPoints();
-                }
-                const pts = [pos[j], pos[j+1], pos[j+2]];
-                j = j + 3;
-
-                return pts;
-            }
-
-            if (!this.morphInitialPositions) { 
-                this.morphInitialPositions = this.objects[0].children.map(shape => { return shape.geometry.attributes.position.array.slice(); }); 
-            }
-            
-            this.objects[0].children.forEach((shape1, index) => {
-                const initPos1 = this.morphInitialPositions[index];
-                const pos1 = shape1.geometry.attributes.position.array;
-                for (let i = 0; i < pos1.length; i = i + 3) {
-                    const targetPoints = getNextTargetPoints();
-                    if ( !targetPoints ) continue;
-                    
-                    pos1[i] = interpolate(initPos1[i], targetPoints[0]);
-                    pos1[i+1] = interpolate(initPos1[i+1], targetPoints[1]);
-                    pos1[i+2] = interpolate(initPos1[i+2], targetPoints[2]);
-                }
-        
-                shape1.geometry.attributes.position.needsUpdate = true;
-            }); 
-        } else {    
-            this.animateMorph = false;
-            this.morphProgress = 0;
-            this.morphInitialPositions = null;
-        
-            this.holderObjects?.clear();
-            this.objects[0] = this.objects[1];
-            this.objects[1] = null;
-            this.holderObjects.add(this.objects[0]);
-        }
+        this.effect = effect;
     }
 
     update() {
-        if ( typeof this.objects[0]?.animate === "function" ) {
-            this.objects[0].animate();
-        }
-        
-        if ( this.animateMorph && !this.morphTimeout ) {
-            this.morphTimeout = setTimeout(() => {
-              this.updateMorph();
-              this.morphTimeout = null;
+        if ( this.effect && !this.effectTimeout ) {
+            this.effectTimeout = setTimeout(() => {
+                this.effect.animate();
+                if ( this.effect.isDone() ) {
+                    if ( this.objects[1] ) {
+                        this.holderObjects?.clear();
+                        this.objects[0] = this.objects[1];
+                        this.objects[1] = null;
+                        this.holderObjects.add(this.objects[0]);
+                    }
+                    this.effect = null;
+                }
+                this.effectTimeout = null;
             }, 24);
         }
     }    
