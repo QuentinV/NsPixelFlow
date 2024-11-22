@@ -3,8 +3,8 @@ import { BaseEffect} from './baseEffect';
 import * as THREE from 'three'
 
 export class MatrixEffect extends BaseEffect {
-    constructor({ points, fadeOutTimer, containerObject }) {
-        super({ points, fadeOutTimer, containerObject });
+    constructor({ points, fadeOutTimer, containerObject, animator }) {
+        super({ points, fadeOutTimer, containerObject, animator });
     }
     
     init() {

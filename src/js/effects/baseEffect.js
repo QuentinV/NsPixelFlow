@@ -1,5 +1,13 @@
+import { AttractionAnimator } from "./animators/attraction";
+import { StepperAnimator } from "./animators/stepper";
+
+const animators = {
+    attraction: AttractionAnimator,
+    stepper: StepperAnimator
+}
+
 export class BaseEffect {
-    constructor({ points, fadeOutTimer, containerObject }) {
+    constructor({ points, fadeOutTimer, containerObject, animator }) {
         this.points = points;
         if ( fadeOutTimer ) {
             setTimeout(() => {
@@ -9,6 +17,7 @@ export class BaseEffect {
         this.containerObject = containerObject;
         this.material = containerObject?.getMaterial();
         this.morphProgress = 0;
+        this.animator = new animators[animator || 'attraction'];
     }
 
     getType() {
@@ -29,51 +38,9 @@ export class BaseEffect {
 
     animate() {
         if ( this.morphProgress >= 1 ) return;
-
         this.morphProgress += 0.015;
 
-        const morphProgress = 1 - Math.pow(1 - this.morphProgress, 2);//3 * Math.pow(this.morphProgress, 2) - 2 * Math.pow(this.morphProgress, 3);
-        function interpolate(start, end) { 
-            return start * (1 - morphProgress) + end * morphProgress; 
-        }
-
-        const geometries = this.containerObject.getHolderObjects().children[0].children.map( child => child.geometry );
-        const points = this.getPoints();
-        if ( !this.originalPositions ) {    
-            this.originalPositions = geometries.flatMap( g => [...g.attributes.position.array.slice()] );
-        }
-
-        let k = 0;
-        let pk = 0;
-        const getNextPoints = () => {
-            if ( k >= geometries.length ) {
-                return null;
-            }
-            let pos = geometries[k].attributes.position.array;
-            if ( pk >= pos.length ) {
-                pk = 0; 
-                k++;
-                return getNextTargetPoints();
-            }
-            
-            const o = { pos, index: pk };
-            pk = pk + 3;
-
-            return o;
-        }
-
-        for (let i = 0; i < points.length; i++) {
-            const { pos, index } = getNextPoints();
-            const origIndex = i * 3;
-
-            pos[index] = interpolate(this.originalPositions[origIndex], points[i].x);
-            pos[index + 1] = interpolate(this.originalPositions[origIndex + 1], points[i].y);
-            pos[index + 2] = interpolate(this.originalPositions[origIndex + 2], points[i].z);
-        }
-        
-        geometries.forEach( g => {
-            g.attributes.position.needsUpdate = true;
-        })
+        this.animator.animate({ progress: this.morphProgress, containerObject: this.containerObject, points: this.getPoints() });
 
         if ( this.fadeOutAnimate ) {
             const particleMaterial = this.getParticleMaterial();

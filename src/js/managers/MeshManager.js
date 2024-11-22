@@ -7,7 +7,7 @@ import { MatrixEffect } from '../effects/matrix';
 import { TornadoEffect } from '../effects/tornado';
 import { VortexEffect } from '../effects/vortex';
 import { MorphingEffect } from '../effects/morphing';
-import { BorderEffect } from "../effects/borderEffect";
+import { BorderEffect } from "../effects/border";
 
 const meshes = {
     drawing: () => DrawingMesh,
@@ -48,6 +48,7 @@ export default class MeshManager {
             keepRotate: options.keepRotate,
             rotateDuration: options.rotateDuration,
             effect: options.effect,
+            animator: options.animator,
             width,
             height
         }
@@ -118,7 +119,8 @@ export default class MeshManager {
                 points: mesh.getPoints(), 
                 width: this.properties.width, 
                 height: this.properties.height, 
-                containerObject: this.containerObject
+                containerObject: this.containerObject,
+                animator: this.properties.animator
             });
         }
 

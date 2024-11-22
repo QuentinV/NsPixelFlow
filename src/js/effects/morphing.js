@@ -1,8 +1,8 @@
 import { BaseEffect } from "./baseEffect";
 
 export class MorphingEffect extends BaseEffect {
-    constructor({ points, fadeOutTimer, containerObject }) {
-        super({ points, fadeOutTimer, containerObject });
+    constructor({ points, fadeOutTimer, containerObject, animator }) {
+        super({ points, fadeOutTimer, containerObject, animator });
     }
 
     getType() {
