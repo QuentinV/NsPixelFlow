@@ -161,6 +161,7 @@ export default class MeshManager {
             this.effectTimeout = setTimeout(() => {
                 this.effect.animate();
                 if ( this.effect.isDone() ) {
+                    console.log('effect done')
                     if ( this.objects[1] ) {
                         this.holderObjects?.clear();
                         this.objects[0] = this.objects[1];

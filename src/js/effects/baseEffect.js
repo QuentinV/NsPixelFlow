@@ -1,9 +1,9 @@
 import { AttractionAnimator } from "./animators/attraction";
-import { StepperAnimator } from "./animators/stepper";
+import { DrawingAnimator } from "./animators/drawing";
 
 const animators = {
     attraction: AttractionAnimator,
-    stepper: StepperAnimator
+    drawing: DrawingAnimator
 }
 
 export class BaseEffect {
@@ -38,7 +38,7 @@ export class BaseEffect {
 
     animate() {
         if ( this.morphProgress >= 1 ) return;
-        this.morphProgress += 0.015;
+        this.morphProgress += this.animator.getProgressIncrease();
 
         this.animator.animate({ progress: this.morphProgress, containerObject: this.containerObject, points: this.getPoints() });
 

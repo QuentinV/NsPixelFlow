@@ -4,6 +4,10 @@ export class AttractionAnimator {
         //
     }
 
+    getProgressIncrease() {
+        return 0.015;
+    }
+
     animate({ progress, containerObject, points }) {
         const morphProgress = 1 - Math.pow(1 - progress, 2);//3 * Math.pow(this.morphProgress, 2) - 2 * Math.pow(this.morphProgress, 3);
         function interpolate(start, end) { 
