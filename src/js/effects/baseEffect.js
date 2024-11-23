@@ -7,17 +7,18 @@ const animators = {
 }
 
 export class BaseEffect {
-    constructor({ points, fadeOutTimer, containerObject, animator }) {
+    constructor({ options, points, fadeOutTimer, containerObject }) {
         this.points = points;
         if ( fadeOutTimer ) {
             setTimeout(() => {
                 this.fadeOutAnimate = true;
             }, fadeOutTimer);
         }
+        this.options = options;
         this.containerObject = containerObject;
         this.material = containerObject?.getMaterial();
         this.morphProgress = 0;
-        this.animator = new animators[animator || 'attraction'];
+        this.animator = new animators[options.animator || 'attraction']({ options });
     }
 
     getType() {

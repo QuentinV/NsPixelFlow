@@ -27,7 +27,9 @@
 
             fadeOutTimer: number,
 
-            effect: string,
+            effect: string, // border, explosion, matrix, morphing, tornado, vortex
+            effectDuration: number,
+            animator: string, // drawing, attraction
             text: string,
 
             increaseDetails: number, // multiplier to increase points count

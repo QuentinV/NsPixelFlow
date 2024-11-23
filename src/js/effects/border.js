@@ -2,10 +2,10 @@ import { BaseEffect } from "./baseEffect";
 import * as THREE from 'three'
 
 export class BorderEffect extends BaseEffect {
-    constructor({ points, fadeOutTimer, containerObject, animator, height, width }) {
-        super({ points, fadeOutTimer, containerObject, animator });
-        this.width = width;
-        this.height = height;
+    constructor({ options, points, fadeOutTimer, containerObject }) {
+        super({ options, points, fadeOutTimer, containerObject });
+        this.width = options.width;
+        this.height = options.height;
     }
 
     getType() {

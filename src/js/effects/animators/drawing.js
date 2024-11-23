@@ -1,7 +1,10 @@
 
 export class DrawingAnimator {
-    constructor() {
+    constructor({ options }) {
         this.positionIndex = 0;
+        this.properties = {
+            timer: options.effectDuration || 10000
+        };
     }
 
     getProgressIncrease() {
@@ -30,9 +33,8 @@ export class DrawingAnimator {
             this.geometries = containerObject.getHolderObjects().children[0].children.map( child => child.geometry );
             const totalPositions = this.geometries.reduce( (t, g) => t + g.attributes.position.array.length, 0 ) / 3;
 
-            const totalTime = 30000;
             const refreshTime = 24;
-            const totalTickers = totalTime / refreshTime;
+            const totalTickers = this.properties.timer / refreshTime;
             this.morphProgressIncrease = 1 / totalTickers;
             this.amountPositionsPerTick = Math.floor(totalPositions / totalTickers);
 

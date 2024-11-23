@@ -116,11 +116,9 @@ export default class MeshManager {
         let effect = null;
         if ( this.properties.effect ) {
             effect = new effects[this.properties.effect]({ 
+                options: this.properties,
                 points: mesh.getPoints(), 
-                width: this.properties.width, 
-                height: this.properties.height, 
-                containerObject: this.containerObject,
-                animator: this.properties.animator
+                containerObject: this.containerObject
             });
         }
 
