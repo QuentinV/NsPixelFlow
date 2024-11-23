@@ -3,7 +3,8 @@ export class DrawingAnimator {
     constructor({ options }) {
         this.positionIndex = 0;
         this.properties = {
-            timer: options.effectDuration || 10000
+            timer: options.effectDuration || 10000,
+            mode: options.animatorMode || 'timeline'
         };
     }
 
@@ -15,6 +16,7 @@ export class DrawingAnimator {
         if ( this.k >= this.geometries.length ) {
             return null;
         }
+
         let pos = this.geometries[this.k].attributes.position.array;
         if ( this.pk >= pos.length ) {
             this.pk = 0; 
@@ -28,11 +30,18 @@ export class DrawingAnimator {
         return o;
     }
 
+    shuffleArray(array) { 
+        for (let i = array.length - 1; i > 0; i--) { 
+            const j = Math.floor(Math.random() * (i + 1)); 
+            [array[i], array[j]] = [array[j], array[i]];
+        } 
+        return array; 
+    }
+
     animate({ progress, containerObject, points }) {
         if ( !this.geometries ) {    
             this.geometries = containerObject.getHolderObjects().children[0].children.map( child => child.geometry );
             const totalPositions = this.geometries.reduce( (t, g) => t + g.attributes.position.array.length, 0 ) / 3;
-
             const refreshTime = 24;
             const totalTickers = this.properties.timer / refreshTime;
             this.morphProgressIncrease = 1 / totalTickers;
@@ -41,6 +50,8 @@ export class DrawingAnimator {
             this.k = 0;
             this.pk = 0;
 
+            this.indexes = ( this.properties.mode === 'random' ) ? this.shuffleArray([...[...Array(points.length)].keys()]) : [...points.keys()];
+
             return;
         }
 
@@ -48,7 +59,7 @@ export class DrawingAnimator {
             const next = this.getNextPoints();
             if ( !next ) continue;
             const { pos, index } = next;
-            const point = points[this.positionIndex];
+            const point = points[this.indexes[this.positionIndex]];
 
             pos[index] = point.x;
             pos[index+1] = point.y;
