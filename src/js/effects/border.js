@@ -15,7 +15,7 @@ export class BorderEffect extends BaseEffect {
     init() {
         this.particleGeometry = new THREE.BufferGeometry();
         const vertices = new Float32Array(this.points.length * 3);
-
+        console.log('init', this.width, this.height)
         for (let i = 0; i < this.points.length; i++) {
             const side = Math.floor(Math.random() * 4);
             
@@ -37,7 +37,7 @@ export class BorderEffect extends BaseEffect {
                     vertices[i * 3 + 1] = (Math.random() - 0.5) * this.height;
                     break;
             }
-            vertices[i * 3 + 2] = (Math.random() - 0.5) * 600; // Random depth
+            vertices[i * 3 + 2] = (Math.random() - 0.5) * (this.width > 1500 ? 600 : 1050); // Random depth
         }
 
         this.particleGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
