@@ -6,7 +6,8 @@
     texts: [
         { 
           text: string; 
-          background: boolean;
+          background?: boolean;
+          smallCaps?: boolean;
           startTimer?: number;
           endTimer?: number; 
           event?: 'songEnded';
@@ -84,7 +85,24 @@
 ```json
 {
   "startBtn": true,
-  "title": "Bettle juice 2!",
+  "texts": [
+    {
+      "text": "Bettle juice 2!",
+      "endTimer": 1500,
+      "background": true,
+      "smallCaps": true
+    },
+    {
+      "text": "Write in comments your what you think the drawing is !",
+      "startTimer": 4000,
+      "position": "center"
+    },
+    {
+      "text": "Listen to the full music on youtube! ",
+      "background": true,
+      "startTimer": 75000
+    }
+  ],
   "songUrl": "http://192.168.1.84:8585/storage/123/song.mp3",
   "glitch": true,
   "glitchPortrait": true,
@@ -100,10 +118,11 @@
       "autoNext": false,
       "posZ": 3,
       "effect": "border",
-      "effectDuration": 80000,
+      "effectDuration": 75000,
       "animator": "drawing",
       "animatorMode": "timeline",
-      "viewHeight": "50%"
+      "viewHeight": "50%",
+      "startColor": "yellow"
     },
     {
       "id": "box",
