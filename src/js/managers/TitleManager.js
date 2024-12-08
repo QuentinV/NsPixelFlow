@@ -1,6 +1,9 @@
 export default class TitleManager {
-    constructor({ text }) {
+    constructor({ text, position, background, smallCaps }) {
         this.text = text;
+        this.background = background;
+        this.position = position;
+        this.smallCaps = smallCaps;
         this.build();
     }
 
@@ -8,7 +11,7 @@ export default class TitleManager {
         const content = document.getElementById('content');
         this.element = document.createElement('div');
         this.element.textContent = this.text;
-        this.element.id = "title";
+        this.element.className = `title title-${this.position} ${this.background ? 'title-background' : ''} ${this.smallCaps ? 'title-small-caps' : ''}`;
         content.append(this.element);
     }
 
@@ -16,9 +19,20 @@ export default class TitleManager {
         this.element.style.display = "flex";
     }
 
+    hide() {
+        this.element.style.display = "none";
+    }
+
+    visibleAfter(time, callback) {
+        setTimeout(() => {
+            this.show();
+            callback?.()
+        }, time);
+    }
+
     hideAfter(time, callback) {
         setTimeout(() => {
-            this.element.style.display = "none";
+            this.hide();
             callback?.()
         }, time);
     }

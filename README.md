@@ -3,9 +3,20 @@
 ```typescript
 {
     startBtn: boolean, // whether or not to display a button to start the song. Required by broswer to have a user action.
+
     title: string, // display title on page loading
     titleEnd: number, // Display title when song is over
     titleHide: number, // amount of milliseconds when to hide title
+    
+    texts: [
+        { 
+          text: string; 
+          startTimer?: number;
+          endTimer?: number; 
+          event?: 'songEnded';
+          position?: 'center' | 'top'; // default top
+        }
+    ],
     songDelay: number, // delay loading of song (milliseconds)
     songUrl: string, // url of song to be loaded and analize for frequency and beat
     backgroundImage: string, // url of background image
@@ -66,5 +77,48 @@
             waitUntil: string, // id of view
         }
     ]
+}
+```
+
+
+### Examples
+
+#### Tiktok
+
+```json
+{
+  "startBtn": true,
+  "title": "Bettle juice 2!",
+  "songUrl": "http://192.168.1.84:8585/storage/123/song.mp3",
+  "glitch": true,
+  "glitchPortrait": true,
+  "cornersPulse": true,
+  "resize": true,
+  "views": [
+    {
+      "id": "draw",
+      "shape": "drawing",
+      "imageUrl": "http://192.168.1.84:8585/storage/randompictures/99.json",
+      "autoMix": false,
+      "autoRotate": false,
+      "autoNext": false,
+      "posZ": 3,
+      "effect": "border",
+      "effectDuration": 80000,
+      "animator": "drawing",
+      "animatorMode": "timeline",
+      "viewHeight": "50%"
+    },
+    {
+      "id": "box",
+      "shape": "box",
+      "autoMix": true,
+      "autoRotate": true,
+      "autoNext": false,
+      "keepRotate": true,
+      "viewHeight": "50%",
+      "posZ": 10.2
+    }
+  ]
 }
 ```

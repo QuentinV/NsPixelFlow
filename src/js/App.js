@@ -49,11 +49,15 @@ const initializeWebgls = async (options) => {
     const audioManager = new AudioManager(options);
 
     await audioManager.loadAudioBuffer();
-    if ( options.titleEnd ) {
-        audioManager.onEnded(() => {
-            (new TitleManager({ text: options.titleEnd })).show();
-        })
-    }
+
+    options.texts
+        ?.filter( t => t.event === 'songEnded' )
+        ?.forEach( t => {
+            audioManager.onEnded(() => {
+                (new TitleManager({ text: t.text })).show();
+            })
+        } );
+
     audioManager.onEnded(() => {
         setTimeout(() => {
             document.body.dispatchEvent(new Event('musicEnded'));
@@ -96,11 +100,17 @@ const update = ({ audioManager, instances }) => {
 
 const initialize = async options => {
     document.getElementById('startBtn').style.display = 'none';
-    if ( options?.title ) {
-        const titleManager = new TitleManager({ text: options.title });
-        titleManager.show();
-        titleManager.hideAfter(options.titleHide ?? 1000);
-    }
+
+    options.texts
+        ?.filter( t => t.event !== 'songEnded' )
+        ?.forEach( t => {
+            const titleManager = new TitleManager({ ...t, position: t.position ?? 'top' });
+            console.log(t.startTimer)
+            titleManager.visibleAfter(t.startTimer ?? 0);
+            if (t.endTimer) {
+                titleManager.hideAfter(t.endTimer);
+            }
+        } );
 
     setTimeout(() => {
         initializeWebgls(options)

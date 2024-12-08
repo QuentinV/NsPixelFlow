@@ -196,18 +196,14 @@ canvas {
 }
 
 /* TITLE */
-#title {
+.title {
   font-family: "Playwrite GB S", cursive;
   font-optical-sizing: auto;
-  font-variant: small-caps;
+  
   line-height: 1.5;
   
-  background-color: white;
-  color: blue;
-  border: solid 2px yellow;
-
   position: fixed;
-  display: flex;
+  display: none;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -216,11 +212,29 @@ canvas {
   min-height: 30px;
   padding: 10px;
   border-radius: 15px;
-  top: 25%;
   left: 12.5%;
 
+  color: white;
+}
+
+.title-small-caps {
+  font-variant: small-caps;
+}
+
+.title-background {
+  background-color: white;
+  color: blue;
+  border: solid 2px yellow;
+}
+
+.title-top {
+  top: 25%;
   transform: rotate(-10deg);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title-center {
+  top: 45%;
 }
 
 /* DESIGNER */
