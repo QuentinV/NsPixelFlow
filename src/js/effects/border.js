@@ -37,7 +37,7 @@ export class BorderEffect extends BaseEffect {
                     vertices[i * 3 + 1] = (Math.random() - 0.5) * this.height;
                     break;
             }
-            vertices[i * 3 + 2] = (Math.random() - 0.5) * 2000; // Random depth
+            vertices[i * 3 + 2] = (Math.random() - 0.5) * 600; // Random depth
         }
 
         this.particleGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));

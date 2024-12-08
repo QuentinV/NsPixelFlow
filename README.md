@@ -100,7 +100,7 @@
     {
       "text": "Listen to the full music on youtube! ",
       "background": true,
-      "startTimer": 75000
+      "startTimer": 76500
     }
   ],
   "songUrl": "http://192.168.1.84:8585/storage/123/song.mp3",
