@@ -3,14 +3,10 @@
 ```typescript
 {
     startBtn: boolean, // whether or not to display a button to start the song. Required by broswer to have a user action.
-
-    title: string, // display title on page loading
-    titleEnd: number, // Display title when song is over
-    titleHide: number, // amount of milliseconds when to hide title
-    
     texts: [
         { 
           text: string; 
+          background: boolean;
           startTimer?: number;
           endTimer?: number; 
           event?: 'songEnded';
