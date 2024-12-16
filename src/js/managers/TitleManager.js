@@ -1,10 +1,11 @@
 export default class TitleManager {
-    constructor({ text, position, background, smallCaps, fontSize }) {
+    constructor({ text, position, background, smallCaps, fontSize, color }) {
         this.text = text;
         this.background = background;
         this.position = position;
         this.smallCaps = smallCaps;
         this.fontSize = fontSize;
+        this.color = color;
         this.build();
     }
 
@@ -14,6 +15,9 @@ export default class TitleManager {
         this.element.textContent = this.text;
         this.element.className = `title title-${this.position} ${this.background ? 'title-background' : ''} ${this.smallCaps ? 'title-small-caps' : ''}`;
         this.element.style.fontSize = this.fontSize ? this.fontSize : '16px';
+        if ( this.color ) {
+            this.element.style.color = this.color;
+        }
         content.append(this.element);
     }
 
