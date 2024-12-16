@@ -16,11 +16,7 @@ export default class DesignerManager {
         })
         const designerGenerate = document.getElementById('designerGenerate');
         designerGenerate.addEventListener('click', () => {
-            const url = this.generateUrl();
-            navigator.clipboard.writeText(JSON.stringify(
-                url.replaceAll('192.168.1.84:8585', 'storageapi-rest:8585')
-                    .replaceAll('localhost:8586', 'videosvisualizer:8586')
-            ));
+            navigator.clipboard.writeText(this.generateUrl(true));
         });
 
         this.init(this.options);
@@ -35,10 +31,13 @@ export default class DesignerManager {
         return JSON.parse(this.root.querySelector('textarea').value);
     }
 
-    generateUrl() {
+    generateUrl(prod) {
         const json = { config: JSON.stringify(this.save()) };
+        if ( prod ) {
+            json.config = json.config.replaceAll('192.168.1.84:8585', 'storageapi-rest:8585');
+        }
         const params = new URLSearchParams(json);
-        return location.protocol + "//" + location.host + "/?" + params.toString();
+        return location.protocol + "//" + (prod ? 'videosvisualizer:8586' : location.host )  + "/?" + params.toString();
     }
 
     _html() {
