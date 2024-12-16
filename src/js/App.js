@@ -125,10 +125,18 @@ export const setupApp = async options => {
 
     setBackground(options);
     if ( options.startBtn ) {
-        document.getElementById('startBtn').onclick = () => {
+        const startBtn = document.getElementById('startBtn');
+        startBtn.onclick = () => {
             initialize(options);
         };
-        document.getElementById('startBtn').style.display = 'block';
+        startBtn.style.display = 'block';
+        if (options.startBtn === 'humain') {
+            startBtn.style.width = '80%';
+            startBtn.style.height = 'auto';
+            startBtn.style.right = '10%';
+            startBtn.style.bottom = '60%';
+            startBtn.style.padding = '15px 0 15px 0';
+        }
     } else {
         initialize(options);
     }

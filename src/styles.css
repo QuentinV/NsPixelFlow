@@ -44,14 +44,17 @@ canvas {
   display: none;
   color: black;
   position: fixed;
-  width: 80%;
-  left: 10%;
-  top: 40%;
+  width: 1px;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  height: 1px;
   cursor: pointer;
   z-index: 10;
-  font-variant: small-caps  ;
+  font-variant: small-caps;
   font-size: 16px;
-  padding: 15px 0 15px 0;
+  padding: 0;
+  border: 0;
 }
 
 /* Background */  
