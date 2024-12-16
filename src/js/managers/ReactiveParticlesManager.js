@@ -16,7 +16,8 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
       endColor: opts.endColor || 0x00ffff,
       autoRotate: opts.autoRotate ?? true,
       maxFreqValue: opts.fMax || 3,
-      animateFrequency: true
+      animateFrequency: true,
+      lineWidth: opts.lineWidth || 1.0 
     }  
   }
 
@@ -39,6 +40,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
         maxDistance: { value: 1.8 },
         startColor: { value: new THREE.Color(this.properties.startColor) },
         endColor: { value: new THREE.Color(this.properties.endColor) },
+        lineWidth: { value: this.properties.lineWidth }
       },
     })
 

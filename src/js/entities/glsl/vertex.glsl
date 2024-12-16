@@ -8,7 +8,7 @@ uniform float offsetGain;
 uniform float amplitude;
 uniform float frequency;
 uniform float maxDistance;
-
+uniform float lineWidth;
 
 vec3 mod289(vec3 x){
   return x-floor(x*(1./289.))*289.;
@@ -125,7 +125,7 @@ void main() {
   newpos.z += sin(time) * (.1 * offsetGain);
   
   vec4 mvPosition = modelViewMatrix * vec4(newpos, 1.);
-  gl_PointSize = size + (pow(d,3.) * offsetSize) * (1./-mvPosition.z);
+  gl_PointSize = size + (pow(d, 3.0) * offsetSize) * (1.0 / -mvPosition.z) * lineWidth;
   gl_Position = projectionMatrix * mvPosition;
   
   vDistance = d;
