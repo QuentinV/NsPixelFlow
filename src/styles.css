@@ -240,6 +240,10 @@ canvas {
   top: 45%;
 }
 
+.title-bottom {
+  bottom: 10%;
+}
+
 /* DESIGNER */
 #designer {
   height: 500px;

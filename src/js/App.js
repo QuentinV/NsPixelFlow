@@ -39,6 +39,7 @@ const createContainer = ({ viewWidth, viewHeight }) => {
     div.style.width = viewWidth || '100%';
     div.style.height = viewHeight || '100%';
     div.style.margin = 'auto';
+    div.style.display = 'inline-block';
     return div;
 }
 
