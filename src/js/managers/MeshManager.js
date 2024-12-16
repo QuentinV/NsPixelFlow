@@ -50,7 +50,8 @@ export default class MeshManager {
             effect: options.effect,
             animator: options.animator,
             width,
-            height
+            height,
+            refreshTime: options.refreshTime ?? 24
         }
 
         this.effect = null;
@@ -169,7 +170,7 @@ export default class MeshManager {
                     this.effect = null;
                 }
                 this.effectTimeout = null;
-            }, 24);
+            }, this.properties.refreshTime);
         }
     }    
 }

@@ -4,7 +4,8 @@ export class DrawingAnimator {
         this.positionIndex = 0;
         this.properties = {
             timer: options.effectDuration || 10000,
-            mode: options.animatorMode || 'timeline'
+            mode: options.animatorMode || 'timeline',
+            refreshTime: options.refreshTime
         };
     }
 
@@ -42,13 +43,12 @@ export class DrawingAnimator {
         if ( !this.geometries ) {    
             this.geometries = containerObject.getHolderObjects().children[0].children.map( child => child.geometry );
             const totalPositions = this.geometries.reduce( (t, g) => t + g.attributes.position.array.length, 0 ) / 3;
-            const refreshTime = 24;
-            const totalTickers = this.properties.timer / refreshTime;
-            this.morphProgressIncrease = 1 / totalTickers;
+            const totalTickers = this.properties.timer / this.properties.refreshTime;
             this.amountPositionsPerTick = Math.floor(totalPositions / totalTickers);
             if ( this.amountPositionsPerTick <= 0 ) {
                 this.amountPositionsPerTick = 1;
             }
+            this.morphProgressIncrease = 1 / (totalPositions / this.amountPositionsPerTick);
 
             this.k = 0;
             this.pk = 0;
