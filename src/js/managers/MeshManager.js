@@ -53,8 +53,6 @@ export default class MeshManager {
             height,
             refreshTime: options.refreshTime ?? 24
         }
-
-        this.effect = null;
     }
 
     async init({ containerObject }) {
@@ -152,25 +150,29 @@ export default class MeshManager {
 
         this.holderObjects.add(mesh); 
 
-        this.effect = effect;
+        if ( effect ) {
+            this._startEffect(effect);
+        }
+    }
+
+    _startEffect(effect) {
+        console.log('starting effect at ', Date.now() - this.properties.perfCheck)
+        const effectInterval = setInterval(() => {
+            effect.animate();
+            if ( effect.isDone() ) {
+                clearInterval(effectInterval);
+                console.log('effect done', Date.now() - this.properties.perfCheck)
+                if ( this.objects[1] ) {
+                    this.holderObjects?.clear();
+                    this.objects[0] = this.objects[1];
+                    this.objects[1] = null;
+                    this.holderObjects.add(this.objects[0]);
+                }
+            }
+        }, this.properties.refreshTime);
     }
 
     update() {
-        if ( this.effect && !this.effectTimeout ) {
-            this.effectTimeout = setTimeout(() => {
-                this.effect.animate();
-                if ( this.effect.isDone() ) {
-                    console.log('effect done')
-                    if ( this.objects[1] ) {
-                        this.holderObjects?.clear();
-                        this.objects[0] = this.objects[1];
-                        this.objects[1] = null;
-                        this.holderObjects.add(this.objects[0]);
-                    }
-                    this.effect = null;
-                }
-                this.effectTimeout = null;
-            }, this.properties.refreshTime);
-        }
+        //
     }    
 }

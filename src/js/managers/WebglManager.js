@@ -8,6 +8,7 @@ export default class WebGLRenderer {
         this.options = options;
         this.audioManager = audioManager;
         this.bpmManager = bpmManager;
+        this.options.perfCheck = Date.now();
         console.log('webgl contructor', rootElement, this.options);
     }
 
