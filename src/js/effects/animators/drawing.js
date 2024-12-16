@@ -46,6 +46,9 @@ export class DrawingAnimator {
             const totalTickers = this.properties.timer / refreshTime;
             this.morphProgressIncrease = 1 / totalTickers;
             this.amountPositionsPerTick = Math.floor(totalPositions / totalTickers);
+            if ( this.amountPositionsPerTick <= 0 ) {
+                this.amountPositionsPerTick = 1;
+            }
 
             this.k = 0;
             this.pk = 0;
