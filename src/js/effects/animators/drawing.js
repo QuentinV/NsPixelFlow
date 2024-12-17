@@ -43,12 +43,16 @@ export class DrawingAnimator {
         if ( !this.geometries ) {    
             this.geometries = containerObject.getHolderObjects().children[0].children.map( child => child.geometry );
             const totalPositions = this.geometries.reduce( (t, g) => t + g.attributes.position.array.length, 0 ) / 3;
+          
             const totalTickers = this.properties.timer / this.properties.refreshTime;
-            this.amountPositionsPerTick = Math.floor(totalPositions / totalTickers);
+            this.amountPositionsPerTick = Math.ceil(totalPositions / totalTickers);
             if ( this.amountPositionsPerTick <= 0 ) {
                 this.amountPositionsPerTick = 1;
             }
-            this.morphProgressIncrease = 1 / (totalPositions / this.amountPositionsPerTick);
+            
+            this.morphProgressIncrease = this.amountPositionsPerTick / totalPositions;
+
+            console.log("real time for animation", 1/this.morphProgressIncrease * this.properties.refreshTime) 
 
             this.k = 0;
             this.pk = 0;
