@@ -9,6 +9,7 @@ uniform float amplitude;
 uniform float frequency;
 uniform float maxDistance;
 uniform float lineWidth;
+uniform float attenuateNoise;
 
 vec3 mod289(vec3 x){
   return x-floor(x*(1./289.))*289.;
@@ -118,7 +119,7 @@ vec3 curl(float x,float y,float z) {
 
 void main() {
   vec3 newpos = position;
-  vec3 target = position + (normal*.1) + curl(newpos.x * frequency, newpos.y * frequency, newpos.z * frequency) * amplitude;
+  vec3 target = position + (normal*(0.1 / attenuateNoise)) + curl(newpos.x * frequency, newpos.y * frequency, newpos.z * frequency) * (amplitude/attenuateNoise);
   
   float d = length(newpos - target) / maxDistance;
   newpos = mix(position, target, pow(d, 4.));
