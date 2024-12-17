@@ -17,7 +17,8 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
       autoRotate: opts.autoRotate ?? true,
       maxFreqValue: opts.fMax || 3,
       animateFrequency: true,
-      lineWidth: opts.lineWidth || 1.0 
+      lineWidth: opts.lineWidth || 1.0,
+      transparent: opts.transparent ?? true
     }  
   }
 
@@ -29,7 +30,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
       side: THREE.DoubleSide,
       vertexShader: vertex,
       fragmentShader: fragment,
-      transparent: true,
+      transparent: this.properties.transparent,
       uniforms: {
         time: { value: 0 },
         offsetSize: { value: 2 },
