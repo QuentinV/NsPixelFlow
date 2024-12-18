@@ -19,7 +19,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
       animateFrequency: true,
       animateShadows: opts.animateShadows ?? true,
       attenuateNoise: opts.attenuateNoise ?? 1,
-      lineWidth: opts.lineWidth || 1.0,
+      lineWidth: opts.lineWidth || 1.1,
       transparent: opts.transparent ?? true
     }  
   }
@@ -36,7 +36,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
       uniforms: {
         time: { value: 0 },
         offsetSize: { value: 2 },
-        size: { value: 1.1 },
+        size: { value: this.properties.lineWidth },
         attenuateNoise: { value: this.properties.attenuateNoise },
         animateShadows: { value: this.properties.animateShadows },
         frequency: { value: 2 },
@@ -44,9 +44,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
         offsetGain: { value: 0 },
         maxDistance: { value: 1.8 },
         startColor: { value: new THREE.Color(this.properties.startColor) },
-        endColor: { value: new THREE.Color(this.properties.endColor) },
-        lineWidth: { value: this.properties.lineWidth },
-        
+        endColor: { value: new THREE.Color(this.properties.endColor) }        
       },
     })
 
