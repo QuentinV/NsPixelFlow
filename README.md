@@ -44,6 +44,7 @@
 
             startColor: string, // start color of shape lines
             endColor: string, // end color of shape lines
+            color: 'autoFull' | 'autoSingle' | 'fixed',
 
             autoMix: boolean, // auto mix *(default: true)*
             autoRotate: boolean, // auto rotate *(default: true)*

@@ -14,6 +14,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
     this.properties = {
       startColor: opts.startColor || 0xffffff,
       endColor: opts.endColor || 0x00ffff,
+      color: opts.color ?? 'fixed',
       autoRotate: opts.autoRotate ?? true,
       maxFreqValue: opts.fMax || 3,
       animateFrequency: true,
@@ -91,6 +92,11 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
   
   update() {
     if (this.audioManager?.isPlaying) {
+      if ( this.properties.color === 'autoFull' ) {
+          this.material.uniforms.startColor.value = new THREE.Color(this.audioManager.getColor());
+          this.material.uniforms.endColor.value = new THREE.Color(this.audioManager.getColor());
+      }
+
       // Dynamically update amplitude based on the high frequency data from the audio manager
       this.material.uniforms.amplitude.value = 0.8 + THREE.MathUtils.mapLinear(this.audioManager.frequencyData.high, 0, 0.6, -0.1, 0.2)
 
