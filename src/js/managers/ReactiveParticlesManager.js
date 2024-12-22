@@ -46,7 +46,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
         maxDistance: { value: 1.8 },
         startColor: { value: new THREE.Color(this.properties.startColor) },
         endColor: { value: new THREE.Color(this.properties.endColor) }        
-      },
+      }
     })
 
     this.updateFrequency()
@@ -94,7 +94,6 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
     if (this.audioManager?.isPlaying) {
       if ( this.properties.color === 'autoFull' ) {
           this.material.uniforms.startColor.value = new THREE.Color(this.audioManager.getColor());
-          this.material.uniforms.endColor.value = new THREE.Color(this.audioManager.getColor());
       }
 
       // Dynamically update amplitude based on the high frequency data from the audio manager
