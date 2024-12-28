@@ -32,7 +32,6 @@ export default class CubeMesh extends THREE.Object3D {
         this.material.needsUpdate = true
 
         // Create a container for the points mesh and set its orientation
-        //const pointsMesh = new THREE.Object3D()
         this.rotateX(Math.PI / 2)
         this.add(new THREE.Points(geometry, this.material))
 
@@ -55,7 +54,7 @@ export default class CubeMesh extends THREE.Object3D {
     initPosition() {
         gsap.to(this.containerObject.position, {
             duration: 0.6,
-            z: this.properties.posZ ?? 10, //THREE.MathUtils.randInt(9, 11), // Random depth positioning within a range
+            z: this.properties.posZ ? this.properties.posZ * 1.3 : 10, //THREE.MathUtils.randInt(9, 11), // Random depth positioning within a range
             ease: 'elastic.out(0.8)', // Elastic ease-out for a bouncy effect
         })
     }

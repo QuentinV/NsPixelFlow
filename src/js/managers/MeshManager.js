@@ -2,6 +2,7 @@ import CubeMesh from "../meshes/CubeMesh";
 import CylinderMesh from "../meshes/CylinderMesh";
 import DrawingMesh from "../meshes/DrawingMesh";
 import TextMesh from "../meshes/TextMesh";
+import TriangleMesh from '../meshes/TriangleMesh';
 import { ExposionEffect } from '../effects/explosion';
 import { MatrixEffect } from '../effects/matrix';
 import { TornadoEffect } from '../effects/tornado';
@@ -12,8 +13,9 @@ import { BorderEffect } from "../effects/border";
 const meshes = {
     drawing: () => DrawingMesh,
     box: () => CubeMesh,
+    triangle: () => TriangleMesh,
     cylinder: () => CylinderMesh,
-    random: () => Math.random() < 0.5 ? CubeMesh : CylinderMesh,
+    random: () => { const r = Math.random(); return r < 0.33 ? CubeMesh : r < 0.66 ? CylinderMesh : TriangleMesh; },
     text: () => TextMesh,
     'default': () => CubeMesh
 }
