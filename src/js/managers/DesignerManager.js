@@ -32,7 +32,11 @@ export default class DesignerManager {
     }
 
     generateUrl(prod) {
-        const json = { config: JSON.stringify(this.save()) };
+        const obj = this.save();
+        if ( prod ) {
+            obj.startBtn = true;
+        }
+        const json = { config: JSON.stringify(obj) };
         if ( prod ) {
             json.config = json.config.replaceAll('192.168.1.84:8585', 'storageapi-rest:8585');
         }
