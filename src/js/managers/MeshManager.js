@@ -9,12 +9,14 @@ import { TornadoEffect } from '../effects/tornado';
 import { VortexEffect } from '../effects/vortex';
 import { MorphingEffect } from '../effects/morphing';
 import { BorderEffect } from "../effects/border";
+import CustomMesh from "../meshes/CustomMesh";
 
 const meshes = {
     drawing: () => DrawingMesh,
     box: () => CubeMesh,
     triangle: () => TriangleMesh,
     cylinder: () => CylinderMesh,
+    custom: () => CustomMesh,
     random: () => { const r = Math.random(); return r < 0.33 ? CubeMesh : r < 0.66 ? CylinderMesh : TriangleMesh; },
     text: () => TextMesh,
     'default': () => CubeMesh

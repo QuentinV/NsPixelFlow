@@ -1,0 +1,9 @@
+
+-- blue gradient
+radial-gradient(circle, rgba(2,0,36,1) 60%, rgba(9,9,121,0.7819502801120448) 94%, rgba(0,212,255,0.7455357142857143) 100%)
+
+-- red gradient
+radial-gradient(circle, rgba(2,0,36,1) 60%, rgba(99,7,7,0.8743872549019608) 94%, rgba(255,0,134,0.7455357142857143) 100%)
+
+-- yellow
+radial-gradient(circle, rgba(3,0,59,1) 60%, rgba(99,99,7,0.8743872549019608) 94%, rgba(0,18,255,0.7455357142857143) 100%)
