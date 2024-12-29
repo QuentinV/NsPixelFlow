@@ -138,3 +138,58 @@
   ]
 }
 ```
+
+Custom Mesh:
+
+```json
+{
+  "startBtn": "humain",
+  "texts": [
+    {
+      "text": "Chasing the Hundred",
+      "endTimer": 10000,
+      "background": true,
+      "smallCaps": true,
+      "fontSize": "20px"
+    }
+  ],
+  "songUrl": "http://192.168.1.84:8585/storage/songs/Chasing the Hundred---Chasing the Hundred.mp3",
+  "glitch": false,
+  "glitchPortrait": false,
+  "backgroundColor": "radial-gradient(circle, rgba(1,0,27,1) 60%, rgba(7,99,14,0.8743872549019608) 94%, rgba(0,18,255,0.7455357142857143) 100%)",
+  "cornersPulse": true,
+  "resize": true,
+  "views": [
+    {
+      "id": "s",
+      "shape": "custom",
+      "segments": [
+        {
+          "w": 7,
+          "h": 1,
+          "d": 1,
+          "rotate": {
+            "y": 92
+          }
+        },
+        {
+          "w": 7,
+          "h": 1,
+          "d": 1,
+          "rotate": {
+            "y": -92
+          }
+        }
+      ],
+      "autoMix": true,
+      "autoRotate": false,
+      "autoNext": false,
+      "keepRotate": true,
+      "posZ": 6.5,
+      "color": "autoFull",
+      "endColor": "white",
+      "fMax": 6
+    }
+  ]
+}
+```
