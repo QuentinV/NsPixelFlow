@@ -18,6 +18,7 @@ export default class DrawingMesh extends THREE.Object3D {
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     
         contours.forEach((points) => {
+            console.log('points length', points.length)
             points.forEach(point => {
                 if (point.x < minX) minX = point.x;
                 if (point.y < minY) minY = point.y;
@@ -29,7 +30,7 @@ export default class DrawingMesh extends THREE.Object3D {
     
         const centerX = (minX + maxX) / 2;
         const centerY = (minY + maxY) / 2;
-    
+
         if (nextContours) {
           // find biggest shape
           let b = [];
@@ -91,19 +92,29 @@ export default class DrawingMesh extends THREE.Object3D {
     }
 
     append() {
-        // Create a points mesh using the box geometry and the shader material
         this.convertedContours.forEach( convertedContour => {
-            const shape = new THREE.Shape(convertedContour);
-            const geometry = new THREE.ShapeGeometry(shape);
+            const geometry = new THREE.BufferGeometry();
+            const vertices = new Float32Array(convertedContour.length * 3);
+            
+            for (let i = 0; i < convertedContour.length; i++) {
+                vertices[i * 3] = convertedContour[i].x;
+                vertices[i * 3 + 1] = convertedContour[i].y;
+                vertices[i * 3 + 2] = 0; // z = 0
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+            geometry.setAttribute('a_color', this.getVertexColors());
+        
             const pointsMesh = new THREE.Points(geometry, this.material)
             this.add(pointsMesh)
-        })
+        });
     }
 
     create(k, nextContours) {
-        this.material.uniforms.offsetSize.value = Math.floor(30)//THREE.MathUtils.randInt(30, 60))
+        this.material.uniforms.offsetSize.value = Math.floor(30)
         this.material.needsUpdate = true;
-        return this.createDrawing(this.options.drawings[k], nextContours);
+        this.colors = this.options.drawings[k].colors;
+        return this.createDrawing(this.options.drawings[k].points, nextContours);
     }
 
     resamplePoints(points, targetCount) {
@@ -153,5 +164,23 @@ export default class DrawingMesh extends THREE.Object3D {
 
     getPoints() {
         return this.points;
+    }
+
+    getVertexColors() {
+        const colors = this.colors;
+        if ( !colors ) return;
+
+        const pts = this.convertedContours[0];
+        const vertexColors = new Float32Array(pts.length * 4);
+        
+        for (let i = 0; i < pts.length; i++) {
+            const c = colors[i] ? colors[i] : [0.0, 0.0, 0.0, 1.0];
+            vertexColors[i * 4] = c[0];
+            vertexColors[i * 4 + 1] = c[1];
+            vertexColors[i * 4 + 2] = c[2];
+            vertexColors[i * 4 + 3] = c[3];
+        }
+        
+        return new THREE.BufferAttribute(vertexColors, 4)
     }
 }

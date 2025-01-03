@@ -23,12 +23,13 @@ const meshes = {
 }
 
 const effects = {
-    morphing: MorphingEffect,
-    explosion: ExposionEffect,
-    matrix: MatrixEffect,
-    tornado: TornadoEffect,
-    vortex: VortexEffect,
-    border: BorderEffect
+    morphing: () => MorphingEffect,
+    explosion: () => ExposionEffect,
+    matrix: () => MatrixEffect,
+    tornado: () => TornadoEffect,
+    vortex: () => VortexEffect,
+    border: () => BorderEffect,
+    random: () => effects[Object.keys(effects)[Math.floor(Math.random() * Object.keys(effects).length)]]()
 }
 
 export default class MeshManager {
@@ -69,8 +70,8 @@ export default class MeshManager {
         if ( this.properties.imageUrl ) {
             this.properties.drawings = [ await (await fetch(this.properties.imageUrl)).json() ];
             await this.nextMesh('drawing');
-        } else if ( this.properties.imagesSyncUrl ) {
-            this.imagesSync = await this.loadImagesSync({ url: this.properties.imagesSyncUrl });
+        } else if ( this.properties.images ) {
+            await this.loadImagesSync(this.properties.images);
         } else {
             await this.nextMesh(this.properties.shape);
         }
@@ -86,41 +87,45 @@ export default class MeshManager {
         }        
     }
 
-    async loadImagesSync({ url }) {
-        const host = url.substring(0, url.lastIndexOf('/') + 1);
-        const images = await (await fetch(url)).json();
+    async loadImagesSync({ host, list }) {
+        //const host = url.substring(0, url.lastIndexOf('/') + 1);
+        //const images = await (await fetch(url)).json();
 
         this.properties.drawings = [];
-        const promises = images.map( v => fetch(host + v.url).then( res => res.json()));
+        const promises = list.map( ({ url }) => fetch(host + url).then( res => res.json()));
         this.properties.drawings = await Promise.all(promises);
 
         let index = 0;
-        let loading = false;
 
         setInterval(() => {
-            if (loading || !this.audioManager.isPlaying || index >= images.length) return;
-            const currentTime = this.audioManager.audio.context.currentTime;
-            if ( currentTime >= images[index].start + 0.5 ) {
-                this.nextMesh('drawing');
+            if (!this.audioManager.isPlaying || index >= list.length) return;
+            const currentTime = this.audioManager.getCurrentTimeWithOffset();
+            if ( currentTime >= list[index].start ) {
+                console.log("next drawing")
+                this.nextMesh('drawing', { ...this.properties, ...(list[index].opts ?? {}) });
                 index++;
             }
         }, 20);
     }
 
-    async nextMesh(shape) {
+    async nextMesh(shape, options) {
+        if ( !options ) {
+            options = this.properties;
+        }
         this.holderObjects.clear();
 
         let MeshCla = meshes[shape]?.();
         if ( !MeshCla ) MeshCla = meshes.default?.();
 
-        let mesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options: this.properties });
+        let mesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options });
         await mesh.create(this.properties.k);
 
         let effect = null;
-        if ( this.properties.effect ) {
-            effect = new effects[this.properties.effect]({ 
-                options: this.properties,
-                points: mesh.getPoints(), 
+        if ( options.effect ) {
+            effect = new (effects[options.effect]())({ 
+                options,
+                points: mesh.getPoints(),
+                vertexColors: mesh.getVertexColors(),
                 containerObject: this.containerObject
             });
         }
@@ -135,26 +140,27 @@ export default class MeshManager {
             if ( this.properties.k > 0 ) {
                 const nextContours = mesh.getContours();
 
-                let oldMesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options: this.properties });
+                let oldMesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options });
                 await oldMesh.create(this.properties.k - 1, nextContours);
+                oldMesh.append();
 
                 this.objects[0] = oldMesh;
                 this.objects[1] = mesh;
                 mesh = this.objects[0];
             } else {
                 this.objects[0] = mesh;
-            }  
-
-            this.properties.k++;
+            }
         } else {
             this.objects[0] = mesh;
         }
+
+        this.properties.k++;
         
         mesh?.initPosition();
 
         this.holderObjects.add(mesh); 
 
-        if ( effect ) {
+        if ( effect && ( effect?.getType() !== 'transition' || this.objects[1] ) ) {
             this._startEffect(effect);
         }
     }
