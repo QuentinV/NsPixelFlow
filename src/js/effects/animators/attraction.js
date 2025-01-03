@@ -29,7 +29,7 @@ export class AttractionAnimator {
             if ( pk >= pos.length ) {
                 pk = 0; 
                 k++;
-                return getNextTargetPoints();
+                return getNextPoints();
             }
             
             const o = { pos, index: pk };
@@ -39,7 +39,9 @@ export class AttractionAnimator {
         }
 
         for (let i = 0; i < points.length; i++) {
-            const { pos, index } = getNextPoints();
+            const pts = getNextPoints();
+            if ( !pts ) continue;
+            const { pos, index } = pts;
             const origIndex = i * 3;
 
             pos[index] = interpolate(this.originalPositions[origIndex], points[i].x);
