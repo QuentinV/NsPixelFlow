@@ -7,8 +7,9 @@ const animators = {
 }
 
 export class BaseEffect {
-    constructor({ options, points, fadeOutTimer, containerObject }) {
+    constructor({ options, points, vertexColors, fadeOutTimer, containerObject }) {
         this.points = points;
+        this.vertexColors = vertexColors;
         if ( fadeOutTimer ) {
             setTimeout(() => {
                 this.fadeOutAnimate = true;
