@@ -59,6 +59,14 @@ export default class AudioManager {
     return promise
   }
 
+  setStartTime(musicStartTime) {
+    this.musicStartTime = musicStartTime;
+  }
+
+  getCurrentTimeWithOffset() {
+    return this.audio.context.currentTime - (this.musicStartTime/1000);
+  }
+
   play() {
     this.audio.play()
     this.isPlaying = true

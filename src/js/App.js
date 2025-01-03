@@ -88,6 +88,7 @@ const initializeWebgls = async (options) => {
     
     audioManager.play()
     const musicStartTime = Date.now() - initTime;
+    audioManager.setStartTime(musicStartTime);
     console.log('music started after', musicStartTime);
     document.body.dispatchEvent(new CustomEvent('musicStarted', { detail: { musicStartTime } }))
 
