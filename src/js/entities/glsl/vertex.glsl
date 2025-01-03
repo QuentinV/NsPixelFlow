@@ -10,6 +10,9 @@ uniform float frequency;
 uniform float maxDistance;
 uniform float attenuateNoise;
 
+attribute vec4 a_color;
+varying vec4 v_color;
+
 vec3 mod289(vec3 x){
   return x-floor(x*(1./289.))*289.;
 }
@@ -117,6 +120,7 @@ vec3 curl(float x,float y,float z) {
 }
 
 void main() {
+  v_color = a_color;
   vec3 newpos = position;
   vec3 target = position + (normal*(0.1 / attenuateNoise)) + curl(newpos.x * frequency, newpos.y * frequency, newpos.z * frequency) * (amplitude/attenuateNoise);
   

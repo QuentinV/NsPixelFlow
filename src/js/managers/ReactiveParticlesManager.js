@@ -19,6 +19,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
       maxFreqValue: opts.fMax ?? 3,
       animateFrequency: opts.animateFrequency ?? true,
       animateShadows: opts.animateShadows ?? true,
+      varyingColors: opts.varyingColors ?? false,
       attenuateNoise: opts.attenuateNoise ?? 1,
       lineWidth: opts.lineWidth || 1.1,
       transparent: opts.transparent ?? true
@@ -28,7 +29,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
   init() {
     this.holderObjects = new THREE.Object3D()
     this.add(this.holderObjects)
-
+    
     this.material = new THREE.ShaderMaterial({
       side: THREE.DoubleSide,
       vertexShader: vertex,
@@ -40,6 +41,7 @@ export default class ReactiveParticlesManager extends THREE.Object3D {
         size: { value: this.properties.lineWidth },
         attenuateNoise: { value: this.properties.attenuateNoise },
         animateShadows: { value: this.properties.animateShadows },
+        useVaryingColors: { value: this.properties.varyingColors },
         frequency: { value: 2 },
         amplitude: { value: 1 },
         offsetGain: { value: 0 },
