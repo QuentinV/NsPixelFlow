@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import { BaseEffect } from './baseEffect';
 
 export class TornadoEffect extends BaseEffect {
-    constructor({ options, points, fadeOutTimer, containerObject }) {
-        super({ options, points, fadeOutTimer, containerObject });
+    constructor({ options, points, vertexColors, fadeOutTimer, containerObject }) {
+        super({ options, points, vertexColors, fadeOutTimer, containerObject });
     }
 
     init() {
@@ -26,6 +26,10 @@ export class TornadoEffect extends BaseEffect {
         }
         
         this.particleGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        if ( this.vertexColors ) {
+            this.particleGeometry.setAttribute('a_color', this.vertexColors);
+        }
+
         const particleSystem = new THREE.Points(this.particleGeometry, this.material);
         
         return particleSystem;

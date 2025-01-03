@@ -1,7 +1,9 @@
 
 export class AttractionAnimator {
     constructor({ options }) {
-        //
+        this.properties = {
+            progressFactor: options.progressFactor ?? 1
+        };
     }
 
     getProgressIncrease() {
@@ -9,7 +11,7 @@ export class AttractionAnimator {
     }
 
     animate({ progress, containerObject, points }) {
-        const morphProgress = 1 - Math.pow(1 - progress, 2);//3 * Math.pow(this.morphProgress, 2) - 2 * Math.pow(this.morphProgress, 3);
+        const morphProgress = 1 - Math.pow(1 - progress, this.properties.progressFactor);
         function interpolate(start, end) { 
             return start * (1 - morphProgress) + end * morphProgress; 
         }

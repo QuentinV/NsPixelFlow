@@ -3,8 +3,8 @@ import { BaseEffect} from './baseEffect';
 import * as THREE from 'three'
 
 export class MatrixEffect extends BaseEffect {
-    constructor({ options, points, fadeOutTimer, containerObject }) {
-        super({ options, points, fadeOutTimer, containerObject });
+    constructor({ options, points, vertexColors, fadeOutTimer, containerObject }) {
+        super({ options, points, vertexColors, fadeOutTimer, containerObject });
     }
     
     init() {
@@ -22,6 +22,9 @@ export class MatrixEffect extends BaseEffect {
             vertices[i * 3 + 2] = startZ;
         }
         this.particleGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        if ( this.vertexColors ) {
+            this.particleGeometry.setAttribute('a_color', this.vertexColors);
+        }
 
         const particleSystem = new THREE.Points(this.particleGeometry, this.material);
 

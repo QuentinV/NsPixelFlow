@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import { BaseEffect } from './baseEffect';
 
 export class VortexEffect extends BaseEffect {
-    constructor({ options, points, fadeOutTimer, containerObject }) {
-        super({ options, points, fadeOutTimer, containerObject });
+    constructor({ options, points, vertexColors, fadeOutTimer, containerObject }) {
+        super({ options, points, vertexColors, fadeOutTimer, containerObject });
     }
     
     init() {
@@ -21,6 +21,9 @@ export class VortexEffect extends BaseEffect {
             vertices[i * 3 + 2] = startZ;
         }
         this.particleGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        if ( this.vertexColors ) {
+            this.particleGeometry.setAttribute('a_color', this.vertexColors);
+        }
 
         this.particleMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 5, transparent: true, opacity: 1 });
         
