@@ -95,7 +95,8 @@ export default class MeshManager {
             const random = [];
             const min = range.min ?? 0;
             const max = range.max ?? 0;
-            const count = range.count ?? (Math.floor(this.audioManager.audio.buffer.duration / interval));
+            let count = range.count ?? (Math.floor(this.audioManager.audio.buffer.duration / interval));
+            if ( count > max ) count = max;
             console.log('Loading ', count, ' pictures');
             for (let i = min; i < count; ++i) {
                 let n = Math.floor(Math.random() * (max - min + 1)) + min;
