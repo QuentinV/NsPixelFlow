@@ -87,11 +87,23 @@ export default class MeshManager {
         }        
     }
 
-    async loadImagesSync({ host, list }) {
-        //const host = url.substring(0, url.lastIndexOf('/') + 1);
-        //const images = await (await fetch(url)).json();
-
+    async loadImagesSync({ host, list, range }) {
+        if ( !list ) list = [];
         this.properties.drawings = [];
+        if ( range ) {
+            const interval = range?.interval ?? 10;
+            const random = [];
+            const min = range.min ?? 0;
+            const max = range.max ?? 0;
+            const count = range.count ?? (Math.floor(this.audioManager.audio.buffer.duration / interval));
+            console.log('Loading ', count, ' pictures');
+            for (let i = min; i < count; ++i) {
+                let n = Math.floor(Math.random() * (max - min + 1)) + min;
+                random.push(n);
+            }
+            list = random.map( (k, i) => ({ ...(list[i] ?? {}), url: `${k}.json`, start: interval * i } ));
+        }
+
         const promises = list.map( ({ url }) => fetch(host + url).then( res => res.json()));
         this.properties.drawings = await Promise.all(promises);
 
