@@ -14,8 +14,6 @@ float circle(in vec2 _st,in float _radius){
 }
 
 void main(){
-  float alpha=1.;
-
   if ( useVaryingColors ) {
     gl_FragColor = v_color;
   } else {
@@ -25,9 +23,9 @@ void main(){
       if ( animateShadows ) {
         vec2 uv = vec2(gl_PointCoord.x,1.-gl_PointCoord.y);
         vec3 circ = vec3(circle(uv,1.));
-        //gl_FragColor=vec4(color,circ.r * vDistance);
+        gl_FragColor=vec4(color,circ.r * vDistance);
       } else {
-        //gl_FragColor=vec4(color, 1.0);
+        gl_FragColor=vec4(color, 1.0);
       }
   } 
 }
