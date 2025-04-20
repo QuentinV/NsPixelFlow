@@ -94,6 +94,12 @@ const initializeWebgls = async (options) => {
 
     update({ audioManager, instances });
 
+    if ( instances.length ) {
+        document.querySelector('#recordBtn').addEventListener('click', () => {
+            instances[0].record({ duration: 60, fps: 30 }); // FIXME audioManager.audio.duration
+        });
+    }
+
     if (options?.resize) {
         window.addEventListener('resize', () => instances.forEach( i => i.resize() ));
     }

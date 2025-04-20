@@ -57,6 +57,13 @@ canvas {
   border: 0;
 }
 
+#recordBtn {
+  position: fixed;
+  left: 20px;
+  bottom: 50px;
+  z-index: 10;
+}
+
 /* Background */  
 #background {
   margin: 0;
