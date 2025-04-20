@@ -1,43 +1,14 @@
-<!DOCTYPE html>
-<html class="no-js">
-  <head>
-    <title>NsPixelFlow</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-        }
-      }
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/styles.css" />
-    <script>
-      document.documentElement.className = 'js' 
-    </script>
-    <script type="module" defer src="./src/js/index.js"></script>
-  </head>
-  <body>
-    <div id="background">
-      <div class="gradient-background"></div>
-      <div class="glitch"></div>
-      <div class="corners">
-        <div class="corner-rect top-left"></div>
-        <div class="corner-rect top-right"></div>
-        <div class="corner-rect bottom-left"></div>
-        <div class="corner-rect bottom-right"></div>
-      </div>
-    </div>    
-    <div id="designer"></div>
-    <main>
-      <button id="startBtn">Click me</button>
-      <div class="content" id="content"></div>
-    </main>
-    
-    <button id="recordBtn">Record me</button>
-  </body>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" href="favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="manifest" href="manifest.json" />
+        <title>NsPixelFlow</title>
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root" class="flex flex-column"></div>
+    </body>
 </html>
