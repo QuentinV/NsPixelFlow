@@ -2,19 +2,53 @@
   "name": "nspixelflow",
   "version": "0.0.1",
   "private": true,
+  "homepage": "https://quentinv.github.io/nspixelflow",
   "dependencies": {},
   "scripts": {
-    "start": "vite"
+    "start": "vite",
+    "build": "vite build",
+    "deploy": "gh-pages -d build",
+    "eslint": "eslint src/**/* --fix",
+    "prettier": "prettier --write src/**/*"
   },
   "devDependencies": {
+    "@types/node": "^22.14.1",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@typescript-eslint/eslint-plugin": "^8.30.1",
+    "@typescript-eslint/parser": "^8.30.1",
     "canvas": "^2.11.2",
+    "eslint": "^9.25.0",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-plugin-react": "^7.37.5",
     "glslify": "^7.1.1",
     "gsap": "^3.12.5",
+    "prettier": "^3.5.3",
+    "prettier-eslint": "^16.4.1",
+    "primeflex": "^4.0.0",
+    "primereact": "^10.9.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.5.1",
+    "react-router-dom": "^7.5.1",
     "rollup-plugin-glslify": "^1.3.1",
     "three": "^0.169.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4",
+    "typescript": "^5.8.3",
     "vite": "^5.4.8",
     "web-audio-beat-detector": "^8.2.15"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
