@@ -1,17 +1,11 @@
 import { defineConfig } from 'vite'
 import glslify from 'rollup-plugin-glslify'
-import * as path from 'path'
 
 export default defineConfig({
   root: '',
   base: '/',
   build: {
-    outDir: 'dist',
-    rollupOptions: {
-      input: {
-        demo: path.resolve(__dirname, './index.html'),
-      },
-    },
+    outDir: 'dist'
   },
   server: {
     host: true,
