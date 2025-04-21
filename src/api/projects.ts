@@ -6,7 +6,15 @@ export interface Project {
     name: string;
     createdAt: Date;
     updatedAt: Date;
+    rendererSettings?: RendererSettings;
+    audioSettings?: AudioSettings;
 }
+
+export interface RendererSettings {
+    view: { width: number; height: number };
+}
+
+export interface AudioSettings {}
 
 export const listProjects = async () => {
     const projects = await execQuery('projects', (s: IDBObjectStore) =>
@@ -29,4 +37,11 @@ export const newProject = async ({ name }: { name?: string }) => {
         'readwrite'
     );
     return id;
+};
+
+export const getProject = async (id: string) => {
+    const project = await execQuery('projects', (s: IDBObjectStore) =>
+        s.get(id)
+    );
+    return project;
 };

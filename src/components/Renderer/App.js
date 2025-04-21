@@ -2,42 +2,6 @@ import BPMManager from './managers/BPMManager'
 import AudioManager from './managers/AudioManager'
 import TitleManager from './managers/TitleManager'
 import WebglManager from './managers/WebglManager'
-import DesignerManager from './managers/DesignerManager'
-
-const setBackground = ({ backgroundImage, backgroundColor, backgroundStartColor, backgroundEndColor, glitch, glitchPortrait, cornersPulse, cornersPulseColor }) => {
-  const body = document.querySelector('body');
-  if ( backgroundImage ) {
-    body.style.background = `url('${backgroundImage}') center no-repeat cover`;
-  }
-
-  if ( backgroundColor ) {
-    document.getElementById('background').style.background = backgroundColor;
-    document.querySelector('.gradient-background').style.display = 'none';
-  }
-
-  if ( backgroundStartColor && backgroundEndColor ) {
-    // #000022, #0f1a44
-    const background = document.getElementById('background');
-    background.style.background = `linear-gradient(to bottom, ${backgroundStartColor}, ${backgroundEndColor})`;
-    background.style.display = "block";
-    document.querySelector('.gradient-background').style.display = 'none';
-  }
-
-  if ( glitch ) {
-    const glitch = document.querySelector('.glitch');
-    glitch.style.display = 'block';
-    if ( glitchPortrait ) {
-        glitch.classList.add('glitch-portrait');
-    } 
-  }
-  
-  if ( cornersPulse ) {
-    document.querySelector('.corners').style.display = 'block';
-    if ( cornersPulseColor ) {
-        document.querySelectorAll('.corner-rect').forEach( e => e.style.background = cornersPulseColor);
-    }
-  }
-}
 
 const createContainer = ({ viewWidth, viewHeight }) => {
     const div = document.createElement('div');
