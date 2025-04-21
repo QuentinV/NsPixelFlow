@@ -129,28 +129,3 @@ const initialize = async options => {
         initializeWebgls(options)
     }, options.songDelay ?? 0);
 }
-
-export const setupApp = async options => {
-    if ( localStorage.getItem("designer") === "true") {
-        const designer = new DesignerManager({ id: 'designer', options });
-        designer.build();
-    }
-
-    setBackground(options);
-    if ( options.startBtn ) {
-        const startBtn = document.getElementById('startBtn');
-        startBtn.onclick = () => {
-            initialize(options);
-        };
-        startBtn.style.display = 'block';
-        if (options.startBtn === 'humain') {
-            startBtn.style.width = '80%';
-            startBtn.style.height = 'auto';
-            startBtn.style.right = '10%';
-            startBtn.style.bottom = '60%';
-            startBtn.style.padding = '15px 0 15px 0';
-        }
-    } else {
-        initialize(options);
-    }
-}
