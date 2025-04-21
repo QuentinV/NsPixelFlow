@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
-import { audioManager } from '../../../state/audio';
+import { loadAudioFileFx } from '../../../state/audio';
 import { ToastContext } from '../../../context';
 import { Button } from 'primereact/button';
 
 export const AudioLoader = () => {
+    const ref = React.useRef<HTMLInputElement>(null);
     const sendToast = useContext(ToastContext);
 
     const handleFileChange = async (
@@ -11,7 +12,7 @@ export const AudioLoader = () => {
     ) => {
         const file = event.target.files?.[0];
         if (!file) return;
-        await audioManager.loadFromFile(file);
+        await loadAudioFileFx(file);
 
         sendToast({
             severity: 'success',
@@ -26,8 +27,14 @@ export const AudioLoader = () => {
                 accept="audio/*"
                 onChange={(event) => handleFileChange(event)}
                 className="hidden"
+                ref={ref}
             />
-            <Button label="Upload" icon="pi pi-file-plus" size="small" />
+            <Button
+                label="Upload"
+                icon="pi pi-file-plus"
+                size="small"
+                onClick={() => ref.current?.click()}
+            />
         </>
     );
 };

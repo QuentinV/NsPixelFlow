@@ -74,7 +74,7 @@ export class AudioManager {
         }
     }
 
-    async loadFromFile(file: File) {
+    async loadFromFile(file: File): Promise<void> {
         if (!this.listener) return;
 
         const listener = this.listener;
@@ -100,12 +100,11 @@ export class AudioManager {
                         audio.setBuffer(buffer);
                         audio.setLoop(false);
                         audio.setVolume(this.settings.volume ?? 1);
-                        audio.play();
 
                         this.settings.name = file.name;
-                        this.settings.duration = audio.duration;
+                        this.settings.duration = buffer.duration;
 
-                        resolve(undefined);
+                        resolve();
                     }
                 );
             };
@@ -272,9 +271,9 @@ export const updateAudioSettings = createEvent<Audio>();
 $audio
     .on(
         loadProjectFromStorageFx.doneData,
-        (_, project) => project?.settings?.audio ?? {}
+        (_, project) => project?.settings?.audio?.[0] ?? {}
     )
-    .on(updateAudioSettings, (_, audio) => audio);
+    .on(updateAudioSettings, (_, audio) => ({ ...audio }));
 
 export const loadAudioFileFx = createEffect((file: File) =>
     audioManager.loadFromFile(file)
