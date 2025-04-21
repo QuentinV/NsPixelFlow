@@ -22,7 +22,7 @@ export const EditorPage = () => {
     }, [id]);
 
     return (
-        <div>
+        <div className="w-full h-full">
             <Renderer />
             <Designer />
         </div>
