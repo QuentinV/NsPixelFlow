@@ -1,4 +1,4 @@
-import React, { createContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import 'primereact/resources/themes/lara-dark-amber/theme.css';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
@@ -7,10 +7,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { InboxPage } from './pages/Inbox';
 import { EditorPage } from './pages/Editor';
 import { Toast, ToastMessage } from 'primereact/toast';
-
-const ToastContext = createContext<(toastMessage: ToastMessage) => void>(
-    () => {}
-);
+import { ToastContext } from './context';
 
 export const App = () => {
     const toast = useRef<Toast>(null);
