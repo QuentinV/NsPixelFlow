@@ -22,23 +22,23 @@ export interface AudioSettings extends Audio {
 }
 
 export class AudioManager {
-    frequencyArray: any[];
+    frequencyArray?: Uint8Array<ArrayBufferLike>;
     frequencyData: { low: number; mid: number; high: number };
     isPlaying: boolean;
     lowFrequency: number;
     midFrequency: number;
     highFrequency: number;
     smoothedLowFrequency: number;
-    audioContext: AudioContext | null;
     color: string;
 
     listener?: THREE.AudioListener;
     audio?: THREE.Audio;
-    audioAnalyser?: THREE.AudioAnalyser;
-    bufferLength?: number;
+    analyser?: THREE.AudioAnalyser;
+    bufferLength: number;
+
+    musicStartTime?: number;
 
     constructor() {
-        this.frequencyArray = [];
         this.frequencyData = {
             low: 0,
             mid: 0,
@@ -49,8 +49,8 @@ export class AudioManager {
         this.midFrequency = 150; //150Hz to 2000Hz
         this.highFrequency = 9000; //2000Hz to 20000Hz
         this.smoothedLowFrequency = 0;
-        this.audioContext = null;
         this.color = 'blue';
+        this.bufferLength = 0;
 
         this.listener = new THREE.AudioListener();
     }
@@ -63,7 +63,7 @@ export class AudioManager {
         reader.readAsArrayBuffer(file);
 
         this.audio = new THREE.Audio(listener);
-        this.audioAnalyser = new THREE.AudioAnalyser(this.audio, 1024);
+        this.analyser = new THREE.AudioAnalyser(this.audio, 1024);
 
         return new Promise((resolve, reject) => {
             reader.onload = (e) => {
@@ -89,25 +89,29 @@ export class AudioManager {
         });
     }
 
-    setStartTime(musicStartTime) {
+    setStartTime(musicStartTime: number) {
         this.musicStartTime = musicStartTime;
     }
 
     getCurrentTimeWithOffset() {
-        return this.audio.context.currentTime - this.musicStartTime / 1000;
+        if (!this.audio) return 0;
+        return (
+            this.audio.context.currentTime - (this.musicStartTime ?? 0) / 1000
+        );
     }
 
     play() {
-        this.audio.play();
+        this.audio?.play();
         this.isPlaying = true;
     }
 
     pause() {
-        this.audio.pause();
+        this.audio?.pause();
         this.isPlaying = false;
     }
 
-    onEnded(callback) {
+    onEnded(callback: () => void) {
+        if (!this.audio) return;
         this.audio.onEnded = () => {
             this.isPlaying = false;
             callback?.();
@@ -115,50 +119,48 @@ export class AudioManager {
     }
 
     collectAudioData() {
-        this.frequencyArray = this.audioAnalyser.getFrequencyData();
+        this.frequencyArray = this.analyser?.getFrequencyData();
     }
 
     analyzeFrequency() {
+        const sampleRate = this.listener?.context.sampleRate;
+        if (sampleRate === undefined) return;
+
         // Calculate the average frequency value for each range of frequencies
         const lowFreqRangeStart = Math.floor(
-            (this.lowFrequency * this.bufferLength) /
-                this.audioContext.sampleRate
+            (this.lowFrequency * this.bufferLength) / sampleRate
         );
         const lowFreqRangeEnd = Math.floor(
-            (this.midFrequency * this.bufferLength) /
-                this.audioContext.sampleRate
+            (this.midFrequency * this.bufferLength) / sampleRate
         );
         const midFreqRangeStart = Math.floor(
-            (this.midFrequency * this.bufferLength) /
-                this.audioContext.sampleRate
+            (this.midFrequency * this.bufferLength) / sampleRate
         );
         const midFreqRangeEnd = Math.floor(
-            (this.highFrequency * this.bufferLength) /
-                this.audioContext.sampleRate
+            (this.highFrequency * this.bufferLength) / sampleRate
         );
         const highFreqRangeStart = Math.floor(
-            (this.highFrequency * this.bufferLength) /
-                this.audioContext.sampleRate
+            (this.highFrequency * this.bufferLength) / sampleRate
         );
         const highFreqRangeEnd = this.bufferLength - 1;
 
-        const lowAvg = this.normalizeValue(
-            this.calculateAverage(
-                this.frequencyArray,
+        const lowAvg = this.#normalizeValue(
+            this.#calculateAverage(
+                this.frequencyArray!,
                 lowFreqRangeStart,
                 lowFreqRangeEnd
             )
         );
-        const midAvg = this.normalizeValue(
-            this.calculateAverage(
-                this.frequencyArray,
+        const midAvg = this.#normalizeValue(
+            this.#calculateAverage(
+                this.frequencyArray!,
                 midFreqRangeStart,
                 midFreqRangeEnd
             )
         );
-        const highAvg = this.normalizeValue(
-            this.calculateAverage(
-                this.frequencyArray,
+        const highAvg = this.#normalizeValue(
+            this.#calculateAverage(
+                this.frequencyArray!,
                 highFreqRangeStart,
                 highFreqRangeEnd
             )
@@ -171,7 +173,11 @@ export class AudioManager {
         };
     }
 
-    calculateAverage(array, start, end) {
+    #calculateAverage(
+        array: Uint8Array<ArrayBufferLike>,
+        start: number,
+        end: number
+    ) {
         let sum = 0;
         for (let i = start; i <= end; i++) {
             sum += array[i];
@@ -179,12 +185,14 @@ export class AudioManager {
         return sum / (end - start + 1);
     }
 
-    normalizeValue(value) {
+    #normalizeValue(value: number) {
         // Assuming the frequency values are in the range 0-256 (for 8-bit data)
         return value / 256;
     }
 
     getPredominantFrequency() {
+        if (!this.frequencyArray?.length) return 0;
+
         let maxAmplitude = 0;
         let dominantFrequency = 0;
 
@@ -192,15 +200,15 @@ export class AudioManager {
             if (f > maxAmplitude) {
                 maxAmplitude = f;
                 dominantFrequency =
-                    (i * (this.audioContext.sampleRate / 2)) /
-                    this.frequencyArray.length;
+                    (i * (this.listener!.context.sampleRate / 2)) /
+                    this.frequencyArray!.length;
             }
         });
 
         return dominantFrequency;
     }
 
-    _getNoteAndColor(frequency) {
+    #getNoteAndColor(frequency: number) {
         let closestNote = noteFrequencies[0];
         let minDiff = Math.abs(frequency - closestNote.frequency);
 
@@ -217,7 +225,7 @@ export class AudioManager {
 
     analyzeColor() {
         const dominantFrequency = this.getPredominantFrequency();
-        return this._getNoteAndColor(dominantFrequency)?.color;
+        return this.#getNoteAndColor(dominantFrequency)?.color;
     }
 
     getColor() {
