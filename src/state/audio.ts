@@ -47,7 +47,7 @@ export class AudioManager {
 
     bpmManager: BPMManager;
 
-    constructor({ bpmManager }: { bpmManager?: BPMManager }) {
+    constructor({ bpmManager }: { bpmManager: BPMManager }) {
         this.settings = {};
 
         this.frequencyData = {
