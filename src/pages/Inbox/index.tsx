@@ -1,26 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'primereact/button';
 import { InstallButton } from '../../components/InstallButton';
-import { listProjects, Project } from '../../api/projects';
+import { listProjects, newProject, Project } from '../../api/projects';
 import { DataScroller } from 'primereact/datascroller';
+import { useNavigate } from 'react-router-dom';
 
 export const InboxPage = () => {
     const [projects, setProjects] = useState<Project[]>([]);
+    const navigate = useNavigate();
 
     const fetchProjects = async () => setProjects(await listProjects());
     useEffect(() => {
         fetchProjects();
     }, []);
 
+    const handleNewProject = async () => {
+        const id = await newProject({});
+        navigate(`/projects/${id}`);
+    };
+
     const itemTemplate = (data: Project) => {
         return (
             <div className="flex gap-4 p-3 align-items-center">
-                <div className="font-bold text-900">{data.name}</div>
+                <div className="font-bold text-900">{data.name ?? data.id}</div>
                 <div className="ml-auto">
                     <Button
                         icon="pi pi-folder-open"
                         label="Open"
                         size="small"
+                        onClick={() => navigate(`/projects/${data.id}`)}
                     />
                 </div>
             </div>
@@ -42,6 +50,7 @@ export const InboxPage = () => {
                             icon="pi pi-folder-plus"
                             label="New project"
                             size="large"
+                            onClick={() => handleNewProject()}
                         />
                     </div>
                 </div>
