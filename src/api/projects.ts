@@ -6,15 +6,30 @@ export interface Project {
     name: string;
     createdAt: Date;
     updatedAt: Date;
-    rendererSettings?: RendererSettings;
-    audioSettings?: AudioSettings;
+    settings?: Settings;
 }
 
-export interface RendererSettings {
+export interface Settings {
     view: { width: number; height: number };
+    render: RenderComponent[];
+    audio: Audio[];
 }
 
-export interface AudioSettings {}
+export interface RenderComponent {
+    id: string;
+    type: 'image' | 'video' | 'text';
+    duration?: number;
+    offset?: number;
+    children?: RenderComponent[];
+}
+
+export interface Audio {
+    name: string;
+    data: string;
+    offset?: number;
+    duration: number;
+    volume: number;
+}
 
 export const listProjects = async () => {
     const projects = await execQuery('projects', (s: IDBObjectStore) =>

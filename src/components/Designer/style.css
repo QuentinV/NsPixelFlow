@@ -1,0 +1,8 @@
+.designer {
+    position: fixed;
+    width: 90%;
+    height: 200px;
+    border: thin blue solid;
+    left: 5%;
+    bottom: 2%;
+}

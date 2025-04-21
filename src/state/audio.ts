@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { AudioSettings } from '../api/projects';
+import { Audio } from '../api/projects';
 
 const noteFrequencies = [
     { note: 'C4', frequency: 261.63, color: 'red' },
@@ -17,8 +17,27 @@ const noteFrequencies = [
     { note: 'C5', frequency: 523.25, color: 'indigo' },
 ];
 
-export default class AudioManager {
-    constructor(options: AudioSettings) {
+export interface AudioSettings extends Audio {
+    file: File;
+}
+
+export class AudioManager {
+    frequencyArray: any[];
+    frequencyData: { low: number; mid: number; high: number };
+    isPlaying: boolean;
+    lowFrequency: number;
+    midFrequency: number;
+    highFrequency: number;
+    smoothedLowFrequency: number;
+    audioContext: AudioContext | null;
+    color: string;
+
+    listener?: THREE.AudioListener;
+    audio?: THREE.Audio;
+    audioAnalyser?: THREE.AudioAnalyser;
+    bufferLength?: number;
+
+    constructor() {
         this.frequencyArray = [];
         this.frequencyData = {
             low: 0,
@@ -33,31 +52,41 @@ export default class AudioManager {
         this.audioContext = null;
         this.color = 'blue';
 
-        this.song = {
-            url: options.songUrl,
-        };
+        this.listener = new THREE.AudioListener();
     }
 
-    async loadAudioBuffer() {
-        // Load the audio file and create the audio buffer
-        const promise = new Promise(async (resolve, reject) => {
-            const audioListener = new THREE.AudioListener();
-            this.audio = new THREE.Audio(audioListener);
-            const audioLoader = new THREE.AudioLoader();
+    async load(file: File) {
+        if (!this.listener) return;
 
-            audioLoader.load(this.song.url, (buffer) => {
-                this.audio.setBuffer(buffer);
-                this.audio.setLoop(false);
-                this.audio.setVolume(1);
-                this.audioContext = this.audio.context;
-                this.bufferLength = this.audioAnalyser.data.length;
-                resolve();
-            });
+        const listener = this.listener;
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(file);
 
-            this.audioAnalyser = new THREE.AudioAnalyser(this.audio, 1024);
+        this.audio = new THREE.Audio(listener);
+        this.audioAnalyser = new THREE.AudioAnalyser(this.audio, 1024);
+
+        return new Promise((resolve, reject) => {
+            reader.onload = (e) => {
+                const audioData = e?.target?.result;
+                if (!audioData) {
+                    reject(new Error('Failed to load audio data'));
+                    return;
+                }
+
+                const audioContext = listener.context;
+                const audio = this.audio!;
+                audioContext.decodeAudioData(
+                    audioData as ArrayBuffer,
+                    (buffer) => {
+                        audio.setBuffer(buffer);
+                        audio.setLoop(false);
+                        audio.setVolume(1);
+
+                        resolve(undefined);
+                    }
+                );
+            };
         });
-
-        return promise;
     }
 
     setStartTime(musicStartTime) {
@@ -203,3 +232,5 @@ export default class AudioManager {
         this.color = this.analyzeColor();
     }
 }
+
+export const audioManager = new AudioManager();

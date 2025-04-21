@@ -1,10 +1,8 @@
 import React from 'react';
-import { RendererSettings } from '../../api/projects';
+import { Project } from '../../api/projects';
 
-interface RendererProps {
-    settings?: RendererSettings;
-}
+interface RendererProps {}
 
-export const Renderer: React.FC<RendererProps> = ({ settings }) => {
+export const Renderer: React.FC<RendererProps> = ({}) => {
     return <div></div>;
 };
