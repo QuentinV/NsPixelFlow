@@ -1,22 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { audioManager } from '../../state/audio';
+import React, { useContext, useEffect } from 'react';
+import '../../state/init';
 import { useParams } from 'react-router';
-import { getProject, Project } from '../../api/projects';
 import { Renderer } from '../../components/Renderer';
 import { Designer } from '../../components/Designer';
 import { ToastContext } from '../../context';
+import { loadProjectFromStorageFx } from '../../state/projects';
 
 export const EditorPage = () => {
     const { id } = useParams<{ id: string }>();
-    const [project, setProject] = useState<Project | null>(null);
     const sendToast = useContext(ToastContext);
 
     useEffect(() => {
         if (!id) return;
         (async () => {
-            const data = await getProject(id);
-            setProject(data);
-            await audioManager.load(data.audio);
+            await loadProjectFromStorageFx({ id });
             sendToast({
                 severity: 'success',
                 summary: 'Project loaded',
@@ -27,7 +24,7 @@ export const EditorPage = () => {
     return (
         <div>
             <Renderer />
-            {!!project && <Designer project={project} />}
+            <Designer />
         </div>
     );
 };

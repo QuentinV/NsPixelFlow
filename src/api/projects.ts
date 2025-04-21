@@ -1,12 +1,15 @@
 import { execQuery } from './db';
 import { v4 as uuid } from 'uuid';
 
-export interface Project {
+export interface Project extends BaseProject {
+    settings?: Settings;
+}
+
+export interface BaseProject {
     id?: string;
     name: string;
     createdAt: Date;
     updatedAt: Date;
-    settings?: Settings;
 }
 
 export interface Settings {
@@ -54,9 +57,21 @@ export const newProject = async ({ name }: { name?: string }) => {
     return id;
 };
 
-export const getProject = async (id: string) => {
+export const getProject = async (id: string): Promise<Project> => {
     const project = await execQuery('projects', (s: IDBObjectStore) =>
         s.get(id)
     );
     return project;
+};
+
+export const updateProject = async (project: Project) => {
+    await execQuery(
+        'projects',
+        (s: IDBObjectStore) =>
+            s.put({
+                ...project,
+                updatedAt: new Date(),
+            }),
+        'readwrite'
+    );
 };

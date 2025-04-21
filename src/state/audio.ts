@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { Audio } from '../api/projects';
+import { createEvent, createStore } from 'effector';
+import { loadProjectFromStorageFx } from './projects';
 
 const noteFrequencies = [
     { note: 'C4', frequency: 261.63, color: 'red' },
@@ -64,9 +66,9 @@ export class AudioManager {
         return this.settings;
     }
 
-    async load(settings: AudioSettings) {
-        const { file, ...rest } = settings;
-        this.settings = rest;
+    async load(settings?: AudioSettings) {
+        const { file, ...rest } = settings ?? {};
+        this.settings = rest ?? {};
         if (file) {
             await this.loadFromFile(file);
         }
@@ -98,6 +100,7 @@ export class AudioManager {
                         audio.setBuffer(buffer);
                         audio.setLoop(false);
                         audio.setVolume(1);
+                        audio.play();
 
                         resolve(undefined);
                     }
@@ -259,3 +262,10 @@ export class AudioManager {
 }
 
 export const audioManager = new AudioManager();
+
+export const $audio = createStore<Audio | null>(null);
+export const updateAudioSettings = createEvent<Audio>();
+
+$audio
+    .on(loadProjectFromStorageFx.doneData, (_, project) => project.audio)
+    .on(updateAudioSettings, (_, audio) => audio);

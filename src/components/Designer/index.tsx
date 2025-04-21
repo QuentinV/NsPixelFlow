@@ -1,17 +1,24 @@
 import React from 'react';
 import './style.css';
-import { Project } from '../../api/projects';
+import { useUnit } from 'effector-react';
+import { $project } from '../../state/projects';
+import { AudioLoader } from './AudioLoader';
 
-interface DesignerProps {
-    project: Project;
-}
+interface DesignerProps {}
 
-export const Designer: React.FC<DesignerProps> = ({ project }) => {
+export const Designer: React.FC<DesignerProps> = ({}) => {
+    const project = useUnit($project);
+
     return (
         <div className="designer">
             <div>Duration</div>
             <div>Animations</div>
-            <div>Audio</div>
+            <div>
+                <h3>Audio</h3>
+                <div>
+                    <AudioLoader />
+                </div>
+            </div>
         </div>
     );
 };
