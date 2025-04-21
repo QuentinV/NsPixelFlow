@@ -4,12 +4,12 @@
 {
     startBtn: boolean, // whether or not to display a button to start the song. Required by broswer to have a user action.
     texts: [
-        { 
-          text: string; 
+        {
+          text: string;
           background?: boolean;
           smallCaps?: boolean;
           startTimer?: number;
-          endTimer?: number; 
+          endTimer?: number;
           event?: 'songEnded';
           position?: 'center' | 'top'; // default top
         }
@@ -25,59 +25,53 @@
 
     maxFreqValue: number, // frequency update max for variation change
 
-    views: [
-        {
-            id: string,
+    views: {
+        id: string,
 
-            shape: string, // either "*cynlinder*" or "*box*" or "*random*" "*drawing*"
-            imagesSyncUrl: string, // url of json files that includes `{ start, url }[]` where url is json drawing
-            imageUrl: string,
+        shape: string, // either "*cynlinder*" or "*box*" or "*random*" "*drawing*"
+        imagesSyncUrl: string, // url of json files that includes `{ start, url }[]` where url is json drawing
+        imageUrl: string,
 
-            fadeOutTimer: number,
+        fadeOutTimer: number,
 
-            effect: string, // border, explosion, matrix, morphing, tornado, vortex
-            effectDuration: number,
-            animator: string, // drawing, attraction
-            text: string,
+        effect: string, // border, explosion, matrix, morphing, tornado, vortex
+        effectDuration: number,
+        animator: string, // drawing, attraction
+        text: string,
 
-            increaseDetails: number, // multiplier to increase points count
+        increaseDetails: number, // multiplier to increase points count
 
-            startColor: string, // start color of shape lines
-            endColor: string, // end color of shape lines
-            color: 'autoFull' | 'autoSingle' | 'fixed',
+        startColor: string, // start color of shape lines
+        endColor: string, // end color of shape lines
+        color: 'autoFull' | 'autoSingle' | 'fixed',
 
-            autoMix: boolean, // auto mix *(default: true)*
-            autoRotate: boolean, // auto rotate *(default: true)*
-            autoNext: boolean,
-            keepRotate: boolean, // keep rotate - repeat from start when duration ends
+        autoMix: boolean, // auto mix *(default: true)*
+        autoRotate: boolean, // auto rotate *(default: true)*
+        autoNext: boolean,
+        keepRotate: boolean, // keep rotate - repeat from start when duration ends
 
-            rotateDuration: number, // rotate duration (slower or faster) in seconds. Default is 3.
-            rotateYoyo: number, // rotate yoyo efect. Include repeat infinite.
+        rotateDuration: number, // rotate duration (slower or faster) in seconds. Default is 3.
+        rotateYoyo: number, // rotate yoyo efect. Include repeat infinite.
 
-            w: string, // fixed width (replace wMin & wMax)
-            wMin: string,
-            wMax: string,
-            h: string, // fixed height (replace hMin & hMax)
-            hMin: string,
-            hMax: string,
-            d: string, // fixed depth (replace dMin & dMax)
-            dMin: string, // min depth
-            dMax: string, // max depth
-            radial: number, // (replace rMin & rMax)
-            radialMin: number, // min radial
-            radialMax: number, // max radial
-            posZ: number, // set zoom. If undefined use default
+        w: string, // fixed width (replace wMin & wMax)
+        wMin: string,
+        wMax: string,
+        h: string, // fixed height (replace hMin & hMax)
+        hMin: string,
+        hMax: string,
+        d: string, // fixed depth (replace dMin & dMax)
+        dMin: string, // min depth
+        dMax: string, // max depth
+        radial: number, // (replace rMin & rMax)
+        radialMin: number, // min radial
+        radialMax: number, // max radial
+        posZ: number, // set zoom. If undefined use default
 
-            viewWidth: string,
-            viewHeight: string
-        },
-        {
-            waitUntil: string, // id of view
-        }
-    ]
+        viewWidth: string,
+        viewHeight: string
+    }
 }
 ```
-
 
 ### Examples
 
@@ -85,111 +79,141 @@
 
 ```json
 {
-  "startBtn": true,
-  "texts": [
-    {
-      "text": "Bettle juice 2!",
-      "endTimer": 1500,
-      "background": true,
-      "smallCaps": true
-    },
-    {
-      "text": "Write in comments your what you think the drawing is !",
-      "startTimer": 4000,
-      "position": "center"
-    },
-    {
-      "text": "Listen to the full music on youtube! ",
-      "background": true,
-      "startTimer": 76500
-    }
-  ],
-  "songUrl": "http://192.168.1.84:8585/storage/123/song.mp3",
-  "glitch": true,
-  "glitchPortrait": true,
-  "cornersPulse": true,
-  "resize": true,
-  "views": [
-    {
-      "id": "draw",
-      "shape": "drawing",
-      "imageUrl": "http://192.168.1.84:8585/storage/randompictures/99.json",
-      "autoMix": false,
-      "autoRotate": false,
-      "autoNext": false,
-      "posZ": 3,
-      "effect": "border",
-      "effectDuration": 75000,
-      "animator": "drawing",
-      "animatorMode": "timeline",
-      "viewHeight": "50%",
-      "startColor": "yellow"
-    },
-    {
-      "id": "box",
-      "shape": "box",
-      "autoMix": true,
-      "autoRotate": true,
-      "autoNext": false,
-      "keepRotate": true,
-      "viewHeight": "50%",
-      "posZ": 10.2
-    }
-  ]
+    "startBtn": true,
+    "texts": [
+        {
+            "text": "Bettle juice 2!",
+            "endTimer": 1500,
+            "background": true,
+            "smallCaps": true
+        },
+        {
+            "text": "Write in comments your what you think the drawing is !",
+            "startTimer": 4000,
+            "position": "center"
+        },
+        {
+            "text": "Listen to the full music on youtube! ",
+            "background": true,
+            "startTimer": 76500
+        }
+    ],
+    "songUrl": "http://192.168.1.84:8585/storage/123/song.mp3",
+    "glitch": true,
+    "glitchPortrait": true,
+    "cornersPulse": true,
+    "resize": true,
+    "views": [
+        {
+            "id": "draw",
+            "shape": "drawing",
+            "imageUrl": "http://192.168.1.84:8585/storage/randompictures/99.json",
+            "autoMix": false,
+            "autoRotate": false,
+            "autoNext": false,
+            "posZ": 3,
+            "effect": "border",
+            "effectDuration": 75000,
+            "animator": "drawing",
+            "animatorMode": "timeline",
+            "viewHeight": "50%",
+            "startColor": "yellow"
+        },
+        {
+            "id": "box",
+            "shape": "box",
+            "autoMix": true,
+            "autoRotate": true,
+            "autoNext": false,
+            "keepRotate": true,
+            "viewHeight": "50%",
+            "posZ": 10.2
+        }
+    ]
 }
 ```
 
-Custom Mesh:
+### Box
 
 ```json
 {
-  "startBtn": "humain",
-  "texts": [
-    {
-      "text": "Chasing the Hundred",
-      "endTimer": 10000,
-      "background": true,
-      "smallCaps": true,
-      "fontSize": "20px"
-    }
-  ],
-  "songUrl": "http://192.168.1.84:8585/storage/songs/Chasing the Hundred---Chasing the Hundred.mp3",
-  "glitch": false,
-  "glitchPortrait": false,
-  "backgroundColor": "radial-gradient(circle, rgba(1,0,27,1) 60%, rgba(7,99,14,0.8743872549019608) 94%, rgba(0,18,255,0.7455357142857143) 100%)",
-  "cornersPulse": true,
-  "resize": true,
-  "views": [
-    {
-      "id": "s",
-      "shape": "custom",
-      "segments": [
+    "startBtn": "humain",
+    "texts": [
         {
-          "w": 7,
-          "h": 1,
-          "d": 1,
-          "rotate": {
-            "y": 92
-          }
-        },
-        {
-          "w": 7,
-          "h": 1,
-          "d": 1,
-          "rotate": {
-            "y": -92
-          }
+            "text": "Chasing the Hundred",
+            "endTimer": 10000,
+            "background": true,
+            "smallCaps": true,
+            "fontSize": "20px"
         }
-      ],
-      "autoMix": true,
-      "autoRotate": false,
-      "autoNext": false,
-      "keepRotate": true,
-      "posZ": 6.5,
-      "color": "autoFull",
-      "endColor": "white",
-      "fMax": 6
+    ],
+    "songUrl": "http://192.168.1.84:8585/storage/123/song.mp3",
+    "glitch": true,
+    "glitchPortrait": true,
+    "cornersPulse": true,
+    "resize": true,
+    "views": {
+        "id": "box",
+        "shape": "box",
+        "autoMix": true,
+        "autoRotate": true,
+        "autoNext": false,
+        "keepRotate": true,
+        "viewHeight": "50%",
+        "posZ": 10.2
     }
-  ]
+}
+```
+
+### Custom Mesh:
+
+```json
+{
+    "startBtn": "humain",
+    "texts": [
+        {
+            "text": "Chasing the Hundred",
+            "endTimer": 10000,
+            "background": true,
+            "smallCaps": true,
+            "fontSize": "20px"
+        }
+    ],
+    "songUrl": "http://192.168.1.84:8585/storage/songs/Chasing the Hundred---Chasing the Hundred.mp3",
+    "glitch": false,
+    "glitchPortrait": false,
+    "backgroundColor": "radial-gradient(circle, rgba(1,0,27,1) 60%, rgba(7,99,14,0.8743872549019608) 94%, rgba(0,18,255,0.7455357142857143) 100%)",
+    "cornersPulse": true,
+    "resize": true,
+    "views": {
+        "id": "s",
+        "shape": "custom",
+        "segments": [
+            {
+                "w": 7,
+                "h": 1,
+                "d": 1,
+                "rotate": {
+                    "y": 92
+                }
+            },
+            {
+                "w": 7,
+                "h": 1,
+                "d": 1,
+                "rotate": {
+                    "y": -92
+                }
+            }
+        ],
+        "autoMix": true,
+        "autoRotate": false,
+        "autoNext": false,
+        "keepRotate": true,
+        "posZ": 6.5,
+        "color": "autoFull",
+        "endColor": "white",
+        "fMax": 6
+    }
 }
 ```
