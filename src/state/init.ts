@@ -2,7 +2,7 @@ import { attach, createEffect, createEvent, sample } from 'effector';
 import { $audio, audioManager } from './audio';
 import { Audio, BaseProject, Project, updateProject } from '../api/projects';
 import { $project } from './projects';
-import { rendererManager } from './renderer';
+import { rendererManager } from '../components/Renderer/webgl';
 
 interface SaveEffectParams {
     $audio: Audio | null;
