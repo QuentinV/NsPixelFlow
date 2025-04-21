@@ -54,6 +54,18 @@ export const recordFx = createEffect(
         }
 
         const stream = canvas.captureStream(fps);
+
+        // Add audio tracks to the stream
+        const audioContext = audioManager.getListener()?.context;
+        if (audioContext) {
+            audioContext
+                .createMediaStreamDestination()
+                .stream.getAudioTracks()
+                .forEach((track) => {
+                    stream.addTrack(track);
+                });
+        }
+
         const recorder = new MediaRecorder(stream, {
             mimeType: 'video/webm; codecs=vp9',
         });

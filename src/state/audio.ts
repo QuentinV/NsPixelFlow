@@ -263,6 +263,10 @@ export class AudioManager {
         return this.color;
     }
 
+    getListener() {
+        return this.listener;
+    }
+
     update() {
         if (!this.isPlaying) return;
 
