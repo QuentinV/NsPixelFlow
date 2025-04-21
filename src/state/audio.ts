@@ -3,6 +3,7 @@ import { Audio, Project } from '../api/projects';
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { loadProjectFromStorageFx } from './projects';
 import { data } from 'react-router';
+import { BPMManager, bpmManager } from './bpm';
 
 const noteFrequencies = [
     { note: 'C4', frequency: 261.63, color: 'red' },
@@ -44,7 +45,9 @@ export class AudioManager {
 
     musicStartTime?: number;
 
-    constructor() {
+    bpmManager: BPMManager;
+
+    constructor({ bpmManager }: { bpmManager?: BPMManager }) {
         this.settings = {};
 
         this.frequencyData = {
@@ -61,6 +64,7 @@ export class AudioManager {
         this.bufferLength = 0;
 
         this.listener = new THREE.AudioListener();
+        this.bpmManager = this.bpmManager;
     }
 
     save(): Audio {
@@ -131,7 +135,8 @@ export class AudioManager {
         );
     }
 
-    play() {
+    async play() {
+        await this.bpmManager.detectBPM(this.audio?.buffer!);
         this.audio?.play();
         this.isPlaying = true;
     }
@@ -276,7 +281,7 @@ export class AudioManager {
     }
 }
 
-export const audioManager = new AudioManager();
+export const audioManager = new AudioManager({ bpmManager });
 
 export const $audio = createStore<Audio | null>(null);
 export const updateAudioSettings = createEvent<Audio>();

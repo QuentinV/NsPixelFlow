@@ -1,7 +1,7 @@
 import { EventDispatcher } from 'three';
 import { guess } from 'web-audio-beat-detector';
 
-export default class BPMManager extends EventDispatcher<{
+export class BPMManager extends EventDispatcher<{
     beat: { type: 'beat' };
 }> {
     interval: number; // Interval for beat events
@@ -18,10 +18,13 @@ export default class BPMManager extends EventDispatcher<{
         // Sets BPM and starts interval to emit beat events
         this.interval = 60000 / bpm;
         clearInterval(this.intervalId);
-        this.intervalId = setInterval(this.updateBPM.bind(this), this.interval);
+        this.intervalId = setInterval(
+            this.#updateBPM.bind(this),
+            this.interval
+        );
     }
 
-    updateBPM() {
+    #updateBPM() {
         this.dispatchEvent({ type: 'beat' });
     }
 
@@ -35,3 +38,5 @@ export default class BPMManager extends EventDispatcher<{
         return this.interval;
     }
 }
+
+export const bpmManager = new BPMManager();
