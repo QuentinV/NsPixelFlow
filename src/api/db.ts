@@ -1,11 +1,11 @@
 export const openDb = (): Promise<IDBDatabase> =>
     new Promise((resolve, reject) => {
-        const request = indexedDB.open('NsWords', 1);
+        const request = indexedDB.open('NsPixelFlow', 1);
 
         request.onupgradeneeded = () => {
             const db = request.result;
-            if (!db.objectStoreNames.contains('default')) {
-                db.createObjectStore('default', {
+            if (!db.objectStoreNames.contains('projects')) {
+                db.createObjectStore('projects', {
                     keyPath: 'id',
                     autoIncrement: false,
                 });
