@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Audio, Project } from '../api/projects';
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { loadProjectFromStorageFx } from './projects';
+import { data } from 'react-router';
 
 const noteFrequencies = [
     { note: 'C4', frequency: 261.63, color: 'red' },
@@ -66,49 +67,57 @@ export class AudioManager {
         return this.settings;
     }
 
-    async load(settings?: AudioSettings) {
-        const { file, ...rest } = settings ?? {};
-        this.settings = rest ?? {};
-        if (file) {
-            await this.loadFromFile(file);
+    async load(settings?: Audio) {
+        this.settings = settings ?? {};
+        if (this.settings.data) {
+            await this.loadFromArrayBuffer(
+                this.#base64ToArrayBuffer(this.settings.data),
+                this.settings.name
+            );
         }
     }
 
-    async loadFromFile(file: File): Promise<void> {
+    async loadFromArrayBuffer(
+        audioData: ArrayBuffer,
+        name?: string
+    ): Promise<void> {
         if (!this.listener) return;
 
         const listener = this.listener;
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(file);
-
         this.audio = new THREE.Audio(listener);
         this.analyser = new THREE.AudioAnalyser(this.audio, 1024);
 
+        const clonedBuffer = audioData.slice(0) as ArrayBuffer;
+        const audioContext = listener.context;
+        const audio = this.audio!;
+
         return new Promise((resolve, reject) => {
-            reader.onload = (e) => {
-                const audioData = e?.target?.result;
-                if (!audioData) {
-                    reject(new Error('Failed to load audio data'));
-                    return;
-                }
+            audioContext.decodeAudioData(audioData as ArrayBuffer, (buffer) => {
+                audio.setBuffer(buffer);
+                audio.setLoop(false);
+                audio.setVolume(this.settings.volume ?? 1);
 
-                const audioContext = listener.context;
-                const audio = this.audio!;
-                audioContext.decodeAudioData(
-                    audioData as ArrayBuffer,
-                    (buffer) => {
-                        audio.setBuffer(buffer);
-                        audio.setLoop(false);
-                        audio.setVolume(this.settings.volume ?? 1);
-
-                        this.settings.name = file.name;
-                        this.settings.duration = buffer.duration;
-
-                        resolve();
-                    }
+                this.settings.name = name ?? this.settings.name;
+                this.settings.duration = buffer.duration;
+                this.settings.data = btoa(
+                    new Uint8Array(clonedBuffer).reduce(
+                        (acc, val) => (acc += String.fromCharCode(val)),
+                        ''
+                    )
                 );
-            };
+
+                resolve();
+            });
         });
+    }
+
+    #base64ToArrayBuffer(base64: string): ArrayBuffer {
+        const binary = atob(base64);
+        const buffer = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+            buffer[i] = binary.charCodeAt(i);
+        }
+        return buffer.buffer;
     }
 
     setStartTime(musicStartTime: number) {
@@ -275,8 +284,23 @@ $audio
     )
     .on(updateAudioSettings, (_, audio) => ({ ...audio }));
 
-export const loadAudioFileFx = createEffect((file: File) =>
-    audioManager.loadFromFile(file)
+export const loadAudioFileFx = createEffect(
+    (file: File): Promise<void> =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onload = (e) => {
+                const audioData = e?.target?.result;
+                if (!audioData) {
+                    reject(new Error('Failed to load audio data'));
+                    return;
+                }
+                audioManager
+                    .loadFromArrayBuffer(audioData as ArrayBuffer, file.name)
+                    .then(resolve)
+                    .catch(reject);
+            };
+        })
 );
 
 sample({
