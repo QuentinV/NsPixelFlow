@@ -1,5 +1,6 @@
 import { createEffect } from 'effector';
 import * as THREE from 'three';
+import { BPMManager, bpmManager } from './bpm';
 
 export default class WebGLRenderer {
     rootElement?: HTMLElement;
@@ -8,8 +9,10 @@ export default class WebGLRenderer {
     scene?: THREE.Scene;
     holder?: THREE.Object3D;
 
-    constructor() {
-        //
+    bpmManager: BPMManager;
+
+    constructor({ bpmManager }: { bpmManager: BPMManager }) {
+        this.bpmManager = bpmManager;
     }
 
     init(rootElement: HTMLElement) {
@@ -83,7 +86,7 @@ export default class WebGLRenderer {
     }
 }
 
-export const rendererManager = new WebGLRenderer();
+export const rendererManager = new WebGLRenderer({ bpmManager });
 
 export const initRendererManager = createEffect(
     ({ element }: { element: HTMLElement }) => rendererManager.init(element)
