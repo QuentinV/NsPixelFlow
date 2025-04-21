@@ -1,34 +1,39 @@
-import { attach, createEffect, createEvent, sample } from 'effector';
+import { createEffect, sample } from 'effector';
 import { $audio, audioManager } from './audio';
 import { Audio, BaseProject, Project, updateProject } from '../api/projects';
 import { $project } from './projects';
 import { rendererManager } from '../components/Renderer/webgl';
+import { RenderComponent } from '../api/projects';
+import { $render } from './render';
 
 interface SaveEffectParams {
     $audio: Audio | null;
+    $render: RenderComponent[];
     $project: BaseProject | null;
 }
 
 sample({
-    source: { $audio, $project },
-    target: createEffect(async ({ $audio, $project }: SaveEffectParams) => {
-        if (!$project || !$audio) return;
-        const project: Project = {
-            ...$project,
-            settings: {
-                audio: [$audio],
-                view: { width: 512, height: 512 },
-                render: [],
-            },
-        };
-        console.log('Saving project', project);
+    source: { $audio, $project, $render },
+    target: createEffect(
+        async ({ $audio, $project, $render }: SaveEffectParams) => {
+            if (!$project || !$audio) return;
+            const project: Project = {
+                ...$project,
+                settings: {
+                    audio: [$audio],
+                    view: { width: 512, height: 512 },
+                    render: $render,
+                },
+            };
+            console.log('Saving project', project);
 
-        await updateProject(project);
-    }),
+            await updateProject(project);
+        }
+    ),
 });
 
 export const playFx = createEffect(async () => {
-    audioManager.play();
+    await audioManager.play();
 
     /*
     const update = ({ audioManager, instances }) => {
