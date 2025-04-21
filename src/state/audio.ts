@@ -267,5 +267,8 @@ export const $audio = createStore<Audio | null>(null);
 export const updateAudioSettings = createEvent<Audio>();
 
 $audio
-    .on(loadProjectFromStorageFx.doneData, (_, project) => project.audio)
+    .on(
+        loadProjectFromStorageFx.doneData,
+        (_, project) => project?.settings?.audio ?? {}
+    )
     .on(updateAudioSettings, (_, audio) => audio);
