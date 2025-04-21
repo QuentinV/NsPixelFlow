@@ -18,16 +18,19 @@ const noteFrequencies = [
 ];
 
 export interface AudioSettings extends Audio {
-    file: File;
+    file?: File;
 }
 
 export class AudioManager {
+    settings: Audio;
     frequencyArray?: Uint8Array<ArrayBufferLike>;
     frequencyData: { low: number; mid: number; high: number };
     isPlaying: boolean;
+
     lowFrequency: number;
     midFrequency: number;
     highFrequency: number;
+
     smoothedLowFrequency: number;
     color: string;
 
@@ -39,6 +42,8 @@ export class AudioManager {
     musicStartTime?: number;
 
     constructor() {
+        this.settings = {};
+
         this.frequencyData = {
             low: 0,
             mid: 0,
@@ -55,7 +60,19 @@ export class AudioManager {
         this.listener = new THREE.AudioListener();
     }
 
-    async load(file: File) {
+    save(): Audio {
+        return this.settings;
+    }
+
+    async load(settings: AudioSettings) {
+        const { file, ...rest } = settings;
+        this.settings = rest;
+        if (file) {
+            await this.loadFromFile(file);
+        }
+    }
+
+    async loadFromFile(file: File) {
         if (!this.listener) return;
 
         const listener = this.listener;

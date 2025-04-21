@@ -24,11 +24,11 @@ export interface RenderComponent {
 }
 
 export interface Audio {
-    name: string;
-    data: string;
+    name?: string;
+    data?: string;
     offset?: number;
-    duration: number;
-    volume: number;
+    duration?: number;
+    volume?: number;
 }
 
 export const listProjects = async () => {
