@@ -20,10 +20,16 @@ export interface Settings {
 
 export interface RenderComponent {
     id: string;
-    type: 'image' | 'video' | 'text';
+    type:
+        | 'drawing'
+        | 'box'
+        | 'triangle'
+        | 'cylinder'
+        | 'custom'
+        | 'random'
+        | 'text';
     duration?: number;
     offset?: number;
-    children?: RenderComponent[];
     settings: MeshSettings;
 }
 
@@ -35,6 +41,7 @@ export type MeshSettings =
     | RandomMeshSettings
     | TextMeshSettings
     | DrawingMeshSettings;
+
 export type MeshEffectSettings =
     | BaseMeshEffectsSettings
     | MorphingEffectSettings
