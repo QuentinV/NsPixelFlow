@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { Audio } from '../api/projects';
-import { createEvent, createStore } from 'effector';
+import { Audio, Project } from '../api/projects';
+import { createEffect, createEvent, createStore, sample } from 'effector';
 import { loadProjectFromStorageFx } from './projects';
 
 const noteFrequencies = [
@@ -272,3 +272,10 @@ $audio
         (_, project) => project?.settings?.audio ?? {}
     )
     .on(updateAudioSettings, (_, audio) => audio);
+
+sample({
+    source: loadProjectFromStorageFx.doneData,
+    target: createEffect((project: Project) => {
+        audioManager.load(project.settings?.audio?.[0]);
+    }),
+});
