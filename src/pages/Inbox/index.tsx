@@ -47,6 +47,7 @@ export const InboxPage = () => {
                     </div>
                     <div>
                         <Button
+                            className="p-button-outlined"
                             icon="pi pi-folder-plus"
                             label="New project"
                             size="large"
