@@ -25,10 +25,7 @@ export const App = () => {
                 <HashRouter>
                     <Routes>
                         <Route index element={<InboxPage />} />
-                        <Route
-                            path="/project/:projectId"
-                            element={<EditorPage />}
-                        />
+                        <Route path="/project/:id" element={<EditorPage />} />
                     </Routes>
                 </HashRouter>
                 <Toast ref={toast} position="top-right" className="w-25rem" />

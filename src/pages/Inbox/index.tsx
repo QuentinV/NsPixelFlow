@@ -16,7 +16,7 @@ export const InboxPage = () => {
 
     const handleNewProject = async () => {
         const id = await newProject({});
-        navigate(`/projects/${id}`);
+        navigate(`/project/${id}`);
     };
 
     const itemTemplate = (data: Project) => {
@@ -28,7 +28,7 @@ export const InboxPage = () => {
                         icon="pi pi-folder-open"
                         label="Open"
                         size="small"
-                        onClick={() => navigate(`/projects/${data.id}`)}
+                        onClick={() => navigate(`/project/${data.id}`)}
                     />
                 </div>
             </div>
