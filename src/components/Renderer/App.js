@@ -18,8 +18,6 @@ const initializeWebgls = async (options) => {
     const bpmManager = new BPMManager();
     const audioManager = new AudioManager(options);
 
-    await audioManager.loadAudioBuffer();
-
     options.texts
         ?.filter( t => t.event === 'songEnded' )
         ?.forEach( t => {
@@ -73,23 +71,4 @@ const update = ({ audioManager, instances }) => {
     requestAnimationFrame(() => update({ audioManager, instances }))
     audioManager.update()
     instances.forEach( i => i.update());
-}
-
-const initialize = async options => {
-    document.getElementById('startBtn').style.display = 'none';
-
-    options.texts
-        ?.filter( t => t.event !== 'songEnded' )
-        ?.forEach( t => {
-            const titleManager = new TitleManager({ ...t, position: t.position ?? 'top' });
-            console.log(t.startTimer)
-            titleManager.visibleAfter(t.startTimer ?? 0);
-            if (t.endTimer) {
-                titleManager.hideAfter(t.endTimer);
-            }
-        } );
-
-    setTimeout(() => {
-        initializeWebgls(options)
-    }, options.songDelay ?? 0);
 }

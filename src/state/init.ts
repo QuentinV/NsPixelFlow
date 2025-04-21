@@ -1,5 +1,5 @@
-import { createEffect, sample } from 'effector';
-import { $audio } from './audio';
+import { attach, createEffect, createEvent, sample } from 'effector';
+import { $audio, audioManager } from './audio';
 import { Audio, BaseProject, Project, updateProject } from '../api/projects';
 import { $project } from './projects';
 
@@ -24,4 +24,12 @@ sample({
 
         await updateProject(project);
     }),
+});
+
+export const playFx = createEffect(async () => {
+    audioManager.play();
+});
+
+export const pauseFx = createEffect(async () => {
+    audioManager.pause();
 });
