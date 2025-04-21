@@ -24,7 +24,44 @@ export interface RenderComponent {
     duration?: number;
     offset?: number;
     children?: RenderComponent[];
+    settings: MeshSettings;
 }
+
+export type MeshSettings =
+    | BoxMeshSettings
+    | TriangleMeshSettings
+    | CylinderMeshSettings
+    | CustomMeshSettings
+    | RandomMeshSettings
+    | TextMeshSettings
+    | DrawingMeshSettings;
+export type MeshEffectSettings =
+    | BaseMeshEffectsSettings
+    | MorphingEffectSettings
+    | ExplosionEffectSettings
+    | MatrixEffectSettings
+    | TornadoEffectSettings
+    | VortexEffectSettings
+    | BorderEffectSettings;
+
+export interface BaseMeshSettings {
+    effects?: MeshEffectSettings[];
+}
+export interface DrawingMeshSettings extends BaseMeshSettings {}
+export interface BoxMeshSettings extends BaseMeshSettings {}
+export interface TriangleMeshSettings extends BaseMeshSettings {}
+export interface CylinderMeshSettings extends BaseMeshSettings {}
+export interface CustomMeshSettings extends BaseMeshSettings {}
+export interface RandomMeshSettings extends BaseMeshSettings {}
+export interface TextMeshSettings extends BaseMeshSettings {}
+
+export interface BaseMeshEffectsSettings {}
+export interface MorphingEffectSettings extends BaseMeshEffectsSettings {}
+export interface ExplosionEffectSettings extends BaseMeshEffectsSettings {}
+export interface MatrixEffectSettings extends BaseMeshEffectsSettings {}
+export interface TornadoEffectSettings extends BaseMeshEffectsSettings {}
+export interface VortexEffectSettings extends BaseMeshEffectsSettings {}
+export interface BorderEffectSettings extends BaseMeshEffectsSettings {}
 
 export interface Audio {
     name?: string;
