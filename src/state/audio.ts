@@ -99,8 +99,11 @@ export class AudioManager {
                     (buffer) => {
                         audio.setBuffer(buffer);
                         audio.setLoop(false);
-                        audio.setVolume(1);
+                        audio.setVolume(this.settings.volume ?? 1);
                         audio.play();
+
+                        this.settings.name = file.name;
+                        this.settings.duration = audio.duration;
 
                         resolve(undefined);
                     }
@@ -273,9 +276,19 @@ $audio
     )
     .on(updateAudioSettings, (_, audio) => audio);
 
+export const loadAudioFileFx = createEffect((file: File) =>
+    audioManager.loadFromFile(file)
+);
+
 sample({
     source: loadProjectFromStorageFx.doneData,
     target: createEffect((project: Project) => {
         audioManager.load(project.settings?.audio?.[0]);
     }),
+});
+
+sample({
+    source: loadAudioFileFx.doneData,
+    fn: () => audioManager.save(),
+    target: updateAudioSettings,
 });
