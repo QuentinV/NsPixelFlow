@@ -64,7 +64,7 @@ export class AudioManager {
         this.bufferLength = 0;
 
         this.listener = new THREE.AudioListener();
-        this.bpmManager = this.bpmManager;
+        this.bpmManager = bpmManager;
     }
 
     save(): Audio {
