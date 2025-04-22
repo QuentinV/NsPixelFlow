@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { loadAudioFileFx } from '../../../state/audio';
-import { ToastContext } from '../../../context';
+import { loadAudioFileFx } from '../../../../state/audio';
+import { ToastContext } from '../../../../context';
 import { Button } from 'primereact/button';
 
 export const AudioLoader = () => {

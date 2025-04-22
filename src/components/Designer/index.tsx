@@ -1,16 +1,13 @@
 import React from 'react';
 import './style.css';
-import { useUnit } from 'effector-react';
-import { $project } from '../../state/projects';
-import { AudioLoader } from './AudioLoader';
 import { Button } from 'primereact/button';
 import { pauseFx, playFx } from '../../state/init';
+import { AudioSettings } from './AudioSettings';
+import { RenderSettings } from './RenderSettings';
 
 interface DesignerProps {}
 
 export const Designer: React.FC<DesignerProps> = ({}) => {
-    const project = useUnit($project);
-
     return (
         <div className="designer">
             <div className="flex gap-4">
@@ -32,12 +29,11 @@ export const Designer: React.FC<DesignerProps> = ({}) => {
             </div>
             <div className="flex gap-4 align-items-center">
                 <h3>Animations</h3>
+                <RenderSettings />
             </div>
-            <div className="flex gap-4 align-items-center">
+            <div className="flex gap-4 align-items-center mt-2">
                 <h3>Audio</h3>
-                <div>
-                    <AudioLoader />
-                </div>
+                <AudioSettings />
             </div>
         </div>
     );

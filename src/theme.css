@@ -51,25 +51,10 @@ html {
     background-color: transparent!important;
 }
 
-/*
-table {
-    border-spacing: 0;
-}
-
-tr.row-even {
-    background-color: #c7d0ff05;
-}
-
 .p-inputnumber-input {
-    width: 2rem;
-    padding: 0.3rem;
-    pointer-events:none;
-    text-align: right;
+    width: 4rem;
 }
 
-.p-inputnumber-button {
-    padding: 0.3rem;
-    width: 1.5rem;
-    background-color: #ffc83a73;
-    border: none;
-}*/
+.input-sm, .input-sm input {
+    width: 10rem;
+}

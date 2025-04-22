@@ -23,11 +23,12 @@ export interface RenderSettings {
     fps?: number;
     background?: { color?: string; image?: string };
     autoMix?: boolean;
+    components?: RenderComponent[];
 }
 
 export interface RenderComponent {
     id: string;
-    type:
+    type?:
         | 'drawing'
         | 'box'
         | 'triangle'
@@ -37,7 +38,7 @@ export interface RenderComponent {
         | 'text';
     duration?: number;
     offset?: number;
-    settings: MeshSettings;
+    settings?: MeshSettings;
     transitionIn?: MeshTransitionIn;
     transitionOut?: MeshTransitionOut;
 }
