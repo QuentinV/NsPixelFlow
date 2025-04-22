@@ -13,9 +13,16 @@ export interface BaseProject {
 }
 
 export interface Settings {
-    view: { width: number; height: number };
-    render: RenderComponent[];
-    audio: Audio[];
+    render?: RenderSettings;
+    audio?: Audio[];
+}
+
+export interface RenderSettings {
+    width?: number;
+    height?: number;
+    fps?: number;
+    background?: { color?: string; image?: string };
+    autoMix?: boolean;
 }
 
 export interface RenderComponent {
@@ -31,6 +38,8 @@ export interface RenderComponent {
     duration?: number;
     offset?: number;
     settings: MeshSettings;
+    transitionIn?: MeshTransitionIn;
+    transitionOut?: MeshTransitionOut;
 }
 
 export type MeshSettings =
@@ -42,27 +51,65 @@ export type MeshSettings =
     | TextMeshSettings
     | DrawingMeshSettings;
 
-export type MeshEffectSettings =
-    | BaseMeshEffectsSettings
-    | MorphingEffectSettings
-    | ExplosionEffectSettings
+export type MeshTransitionIn =
+    | BorderEffectSettings
+    | VortexEffectSettings
     | MatrixEffectSettings
     | TornadoEffectSettings
-    | VortexEffectSettings
-    | BorderEffectSettings;
+    | ExplosionEffectSettings;
+
+export type MeshTransitionOut = MorphingEffectSettings;
 
 export interface BaseMeshSettings {
-    effects?: MeshEffectSettings[];
+    autoRotate?: boolean;
+    posZ?: number;
 }
-export interface DrawingMeshSettings extends BaseMeshSettings {}
-export interface BoxMeshSettings extends BaseMeshSettings {}
-export interface TriangleMeshSettings extends BaseMeshSettings {}
-export interface CylinderMeshSettings extends BaseMeshSettings {}
-export interface CustomMeshSettings extends BaseMeshSettings {}
+export interface DrawingMeshSettings extends BaseMeshSettings {
+    increaseDetails?: number;
+    drawings: { colors: number[][4]; points: { x: number; y: number }[][] }[];
+}
+export interface BoxMeshSettings extends BaseMeshSettings {
+    keepRotate?: boolean;
+    rotateDuration?: number;
+    rotateYoyo?: boolean;
+    widthMin?: number;
+    widthMax?: number;
+    heightMin?: number;
+    heightMax?: number;
+    depthMin?: number;
+    depthMax?: number;
+}
+export interface TriangleMeshSettings extends BaseMeshSettings {
+    keepRotate?: boolean;
+    rotateDuration?: number;
+}
+export interface CylinderMeshSettings extends BaseMeshSettings {
+    heightMin?: number;
+    heightMax?: number;
+    radialMin?: number;
+    radialMax?: number;
+}
+export interface CustomMeshSettings extends BaseMeshSettings {
+    keepRotate?: boolean;
+    rotateDuration?: number;
+    segments?: {
+        x?: number;
+        y?: number;
+        z?: number;
+        w: number;
+        h: number;
+        d: number;
+    }[];
+}
 export interface RandomMeshSettings extends BaseMeshSettings {}
-export interface TextMeshSettings extends BaseMeshSettings {}
+export interface TextMeshSettings extends BaseMeshSettings {
+    font?: string;
+    text?: string;
+}
 
-export interface BaseMeshEffectsSettings {}
+export interface BaseMeshEffectsSettings {
+    animator?: 'attraction' | 'drawing';
+}
 export interface MorphingEffectSettings extends BaseMeshEffectsSettings {}
 export interface ExplosionEffectSettings extends BaseMeshEffectsSettings {}
 export interface MatrixEffectSettings extends BaseMeshEffectsSettings {}
