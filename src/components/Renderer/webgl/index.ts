@@ -1,6 +1,7 @@
 import { createEffect } from 'effector';
 import * as THREE from 'three';
 import { BPMManager, bpmManager } from '../../../state/bpm';
+import { RenderSettings } from '../../../api/projects';
 
 export class WebGLRenderer {
     rootElement?: HTMLElement;
@@ -73,6 +74,8 @@ export class WebGLRenderer {
         this.camera!.updateProjectionMatrix();
         this.renderer!.setSize(width, height);
     }
+
+    updateState(settings: RenderSettings) {}
 
     update() {
         if (this.renderer && this.scene && this.camera)
