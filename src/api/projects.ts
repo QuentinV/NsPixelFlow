@@ -103,6 +103,7 @@ export interface CustomMeshSettings extends BaseMeshSettings {
         w: number;
         h: number;
         d: number;
+        rotate?: { x?: number; y?: number; z?: number };
     }[];
 }
 export interface RandomMeshSettings extends BaseMeshSettings {}
