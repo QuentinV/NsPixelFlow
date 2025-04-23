@@ -8,7 +8,7 @@ export const AudioSettings = () => {
     return (
         <div className="flex gap-3 align-items-center">
             <AudioLoader />
-            {!!audio && (
+            {!!audio?.data && (
                 <div className="border-1 p-2 pl-4 pr-4 relative">
                     {audio.name} / {audio.duration?.toFixed(2)}s
                 </div>
