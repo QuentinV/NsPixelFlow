@@ -30,7 +30,6 @@ export const AudioLoader = () => {
                 ref={ref}
             />
             <Button
-                label="Upload"
                 icon="pi pi-file-plus"
                 size="small"
                 onClick={() => ref.current?.click()}
