@@ -3,19 +3,24 @@ import { InputNumber } from 'primereact/inputnumber';
 import { useUnit } from 'effector-react';
 import {
     $render,
+    deleteMeshEffect,
     deleteRenderComponent,
+    updateMeshEffect,
     updateRenderComponent,
 } from '../../../state/render';
 import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
 import { RenderCompForm } from './RenderCompForm';
-import { RenderComponent } from '../../../api/projects';
+import { MeshEffect, RenderComponent } from '../../../api/projects';
+import { RenderCompEffectForm } from './RenderCompEffectForm';
 
 export const RenderSettings = () => {
     const renderSettings = useUnit($render);
     const [visibleEditCompIndex, setVisibleEditCompIndex] = useState<
         number | null
     >(null);
+    const [visibleEditCompEffectIndex, setVisibleEditCompEffectIndex] =
+        useState<number | null>(null);
 
     const save = (state: RenderComponent) => {
         updateRenderComponent(state);
@@ -25,6 +30,19 @@ export const RenderSettings = () => {
     const onDelete = (state: RenderComponent) => {
         deleteRenderComponent(state.id);
         setVisibleEditCompIndex(null);
+    };
+
+    const saveEffect = (state: MeshEffect) => {
+        if (visibleEditCompEffectIndex === null) return;
+        if (state?.type === undefined) {
+            deleteMeshEffect(visibleEditCompEffectIndex);
+        } else {
+            updateMeshEffect({
+                componentIndex: visibleEditCompEffectIndex,
+                effect: state,
+            });
+        }
+        setVisibleEditCompEffectIndex(null);
     };
 
     return (
@@ -39,6 +57,20 @@ export const RenderSettings = () => {
                     onDelete={onDelete}
                     defaultState={
                         renderSettings?.components?.[visibleEditCompIndex ?? -1]
+                    }
+                />
+            </Sidebar>
+            <Sidebar
+                visible={visibleEditCompEffectIndex != null}
+                onHide={() => setVisibleEditCompEffectIndex(null)}
+                position="right"
+            >
+                <RenderCompEffectForm
+                    onSave={saveEffect}
+                    defaultState={
+                        renderSettings?.components?.[
+                            visibleEditCompEffectIndex ?? -1
+                        ]?.effects?.[0]
                     }
                 />
             </Sidebar>
@@ -66,10 +98,17 @@ export const RenderSettings = () => {
                     {renderSettings?.components?.map((component, index) => (
                         <div
                             key={index}
-                            className="border-1 p-2 cursor-pointer"
+                            className="border-1 p-2 cursor-pointer pl-4 pr-4 relative"
                             onClick={() => setVisibleEditCompIndex(index)}
                         >
                             {component.type}
+                            <i
+                                className="absolute top-0 right-0 pi pi-sparkles"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setVisibleEditCompEffectIndex(index);
+                                }}
+                            />
                         </div>
                     ))}
                 </div>

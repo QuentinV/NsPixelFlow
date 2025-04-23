@@ -1,4 +1,3 @@
-import { createEffect } from 'effector';
 import * as THREE from 'three';
 import { BPMManager, bpmManager } from '../../../state/bpm';
 import { RenderSettings } from '../../../api/projects';

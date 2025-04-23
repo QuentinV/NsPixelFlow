@@ -39,6 +39,7 @@ export interface RenderComponent {
     duration?: number;
     offset?: number;
     settings?: MeshSettings;
+    effects?: MeshEffect[];
     transitionIn?: MeshTransitionIn;
     transitionOut?: MeshTransitionOut;
 }
@@ -62,7 +63,6 @@ export type MeshTransitionIn =
 export type MeshTransitionOut = MorphingEffectSettings;
 
 export interface BaseMeshSettings {
-    autoRotate?: boolean;
     posZ?: number;
 }
 export interface DrawingMeshSettings extends BaseMeshSettings {
@@ -117,6 +117,26 @@ export interface MatrixEffectSettings extends BaseMeshEffectsSettings {}
 export interface TornadoEffectSettings extends BaseMeshEffectsSettings {}
 export interface VortexEffectSettings extends BaseMeshEffectsSettings {}
 export interface BorderEffectSettings extends BaseMeshEffectsSettings {}
+
+export interface MeshEffect {
+    id: string;
+    type?: 'reactiveParticles';
+    settings?: ReactiveParticlesEffectSetting;
+}
+
+export interface ReactiveParticlesEffectSetting {
+    startColor?: string;
+    endColor?: string;
+    color?: 'autoFull' | 'fixed';
+    autoRotate?: boolean;
+    maxFreqValue?: number;
+    animateFrequency?: boolean;
+    animateShadows?: boolean;
+    varyingColors?: boolean;
+    attenuateNoise?: number;
+    lineWidth?: number;
+    transparent?: boolean;
+}
 
 export interface Audio {
     name?: string;
