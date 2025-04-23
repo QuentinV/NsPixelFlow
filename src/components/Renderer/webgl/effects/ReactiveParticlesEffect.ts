@@ -5,10 +5,10 @@ import fragment from '../entities/glsl/fragment.glsl';
 import { WebGLRenderer } from '../index';
 import { ReactiveParticlesEffectSetting } from '../../../../api/projects';
 
-export class ReactiveParticlesManager extends THREE.Object3D {
+export class ReactiveParticlesEffect extends THREE.Object3D {
     webgl: WebGLRenderer;
     time: number;
-    properties: ReactiveParticlesEffectSetting;
+    settings: ReactiveParticlesEffectSetting;
 
     holderObjects?: THREE.Object3D;
     material?: THREE.ShaderMaterial;
@@ -19,7 +19,7 @@ export class ReactiveParticlesManager extends THREE.Object3D {
         this.name = 'ReactiveParticlesManager';
         this.time = 0;
 
-        this.properties = {
+        this.settings = {
             startColor: opts.startColor || 0xffffff,
             endColor: opts.endColor || 0x00ffff,
             color: opts.color ?? 'fixed',
@@ -42,22 +42,22 @@ export class ReactiveParticlesManager extends THREE.Object3D {
             side: THREE.DoubleSide,
             vertexShader: vertex,
             fragmentShader: fragment,
-            transparent: this.properties.transparent,
+            transparent: this.settings.transparent,
             uniforms: {
                 time: { value: 0 },
                 offsetSize: { value: 2 },
-                size: { value: this.properties.lineWidth },
-                attenuateNoise: { value: this.properties.attenuateNoise },
-                animateShadows: { value: this.properties.animateShadows },
-                useVaryingColors: { value: this.properties.varyingColors },
+                size: { value: this.settings.lineWidth },
+                attenuateNoise: { value: this.settings.attenuateNoise },
+                animateShadows: { value: this.settings.animateShadows },
+                useVaryingColors: { value: this.settings.varyingColors },
                 frequency: { value: 2 },
                 amplitude: { value: 1 },
                 offsetGain: { value: 0 },
                 maxDistance: { value: 1.8 },
                 startColor: {
-                    value: new THREE.Color(this.properties.startColor),
+                    value: new THREE.Color(this.settings.startColor),
                 },
-                endColor: { value: new THREE.Color(this.properties.endColor) },
+                endColor: { value: new THREE.Color(this.settings.endColor) },
             },
         });
 
@@ -86,7 +86,7 @@ export class ReactiveParticlesManager extends THREE.Object3D {
 
         if (this.#audioManager().isPlaying) {
             // Randomly determine whether to rotate the holder object
-            if (Math.random() < 0.3 && this.properties.autoRotate) {
+            if (Math.random() < 0.3 && this.settings.autoRotate) {
                 gsap.to(this.holderObjects!.rotation, {
                     duration: Math.random() < 0.8 ? 15 : duration, // Either a longer or BPM-synced duration
                     // y: Math.random() * Math.PI * 2,
@@ -100,7 +100,7 @@ export class ReactiveParticlesManager extends THREE.Object3D {
     }
 
     updateFrequency() {
-        if (this.properties.animateFrequency) {
+        if (this.settings.animateFrequency) {
             // Animate the frequency uniform in the material, syncing with BPM if available
             gsap.to(this.material!.uniforms.frequency, {
                 duration: this.#bpmManager()
@@ -108,7 +108,7 @@ export class ReactiveParticlesManager extends THREE.Object3D {
                     : 2,
                 value: THREE.MathUtils.randFloat(
                     0.5,
-                    this.properties.maxFreqValue!
+                    this.settings.maxFreqValue!
                 ), // Random frequency value for dynamic visual changes
                 ease: 'expo.easeInOut', // Smooth exponential transition for visual effect
             });
@@ -117,7 +117,7 @@ export class ReactiveParticlesManager extends THREE.Object3D {
 
     update() {
         if (this.#audioManager().isPlaying) {
-            if (this.properties.color === 'autoFull') {
+            if (this.settings.color === 'autoFull') {
                 this.material!.uniforms.startColor.value = new THREE.Color(
                     this.#audioManager().getColor()
                 );
