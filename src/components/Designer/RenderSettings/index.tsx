@@ -74,8 +74,35 @@ export const RenderSettings = () => {
                     }
                 />
             </Sidebar>
-            <div className="flex flex-column gap-2">
-                <div className="w-full flex gap-4">
+            <div className="flex gap-3 align-items-center">
+                <Button
+                    icon="pi pi-plus"
+                    onClick={() => setVisibleEditCompIndex(-1)}
+                    size="small"
+                />
+                {renderSettings?.components?.map((component, index) => (
+                    <div
+                        key={index}
+                        className="border-1 p-2 cursor-pointer pl-4 pr-4 relative"
+                        onClick={() => setVisibleEditCompIndex(index)}
+                    >
+                        {component.type}
+                        <i
+                            className="absolute top-0 right-0 pi pi-sparkles"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setVisibleEditCompEffectIndex(index);
+                            }}
+                        />
+                    </div>
+                ))}
+            </div>
+        </>
+    );
+};
+
+/*
+<div className="w-full flex gap-4">
                     <div className="flex gap-4 align-items-center">
                         <label htmlFor="width">Width:</label>
                         <InputNumber placeholder="width" />
@@ -88,31 +115,4 @@ export const RenderSettings = () => {
                         <label htmlFor="fps">FPS:</label>
                         <InputNumber placeholder="fps" className="w-2rem" />
                     </div>
-                </div>
-                <div className="flex gap-3 align-items-center">
-                    <Button
-                        icon="pi pi-plus"
-                        onClick={() => setVisibleEditCompIndex(-1)}
-                        size="small"
-                    />
-                    {renderSettings?.components?.map((component, index) => (
-                        <div
-                            key={index}
-                            className="border-1 p-2 cursor-pointer pl-4 pr-4 relative"
-                            onClick={() => setVisibleEditCompIndex(index)}
-                        >
-                            {component.type}
-                            <i
-                                className="absolute top-0 right-0 pi pi-sparkles"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setVisibleEditCompEffectIndex(index);
-                                }}
-                            />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </>
-    );
-};
+                </div>*/

@@ -28,11 +28,11 @@ export const Designer: React.FC<DesignerProps> = ({}) => {
                 </div>
             </div>
             <div className="flex gap-4 align-items-center">
-                <h3>Animations</h3>
+                <h3 className="w-6rem">Render</h3>
                 <RenderSettings />
             </div>
             <div className="flex gap-4 align-items-center mt-2">
-                <h3>Audio</h3>
+                <h3 className="w-6rem">Audio</h3>
                 <AudioSettings />
             </div>
         </div>
