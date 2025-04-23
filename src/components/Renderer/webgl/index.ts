@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { BPMManager, bpmManager } from '../../../state/bpm';
 import { RenderSettings } from '../../../api/projects';
+import { AudioManager, audioManager } from '../../../state/audio';
 
 export class WebGLRenderer {
     rootElement?: HTMLElement;
@@ -9,10 +9,10 @@ export class WebGLRenderer {
     scene?: THREE.Scene;
     holder?: THREE.Object3D;
 
-    bpmManager: BPMManager;
+    audioManager: AudioManager;
 
-    constructor({ bpmManager }: { bpmManager: BPMManager }) {
-        this.bpmManager = bpmManager;
+    constructor({ audioManager }: { audioManager: AudioManager }) {
+        this.audioManager = audioManager;
     }
 
     init(rootElement: HTMLElement) {
@@ -86,6 +86,10 @@ export class WebGLRenderer {
     getRootElement() {
         return this.rootElement;
     }
+
+    getAudioManager() {
+        return this.audioManager;
+    }
 }
 
-export const rendererManager = new WebGLRenderer({ bpmManager });
+export const rendererManager = new WebGLRenderer({ audioManager });

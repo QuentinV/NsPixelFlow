@@ -272,6 +272,10 @@ export class AudioManager {
         return this.listener;
     }
 
+    getBpmManager() {
+        return this.bpmManager;
+    }
+
     update() {
         if (!this.isPlaying) return;
 

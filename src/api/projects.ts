@@ -125,8 +125,8 @@ export interface MeshEffect {
 }
 
 export interface ReactiveParticlesEffectSetting {
-    startColor?: string;
-    endColor?: string;
+    startColor?: string | number;
+    endColor?: string | number;
     color?: 'autoFull' | 'fixed';
     autoRotate?: boolean;
     maxFreqValue?: number;
