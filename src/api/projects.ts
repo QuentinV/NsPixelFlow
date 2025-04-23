@@ -28,14 +28,7 @@ export interface RenderSettings {
 
 export interface RenderComponent {
     id: string;
-    type?:
-        | 'drawing'
-        | 'box'
-        | 'triangle'
-        | 'cylinder'
-        | 'custom'
-        | 'random'
-        | 'text';
+    type?: RenderComponentType;
     duration?: number;
     offset?: number;
     settings?: MeshSettings;
@@ -43,6 +36,15 @@ export interface RenderComponent {
     transitionIn?: MeshTransitionIn;
     transitionOut?: MeshTransitionOut;
 }
+
+export type RenderComponentType =
+    | 'drawing'
+    | 'box'
+    | 'triangle'
+    | 'cylinder'
+    | 'custom'
+    | 'random'
+    | 'text';
 
 export type MeshSettings =
     | BoxMeshSettings
@@ -64,6 +66,7 @@ export type MeshTransitionOut = MorphingEffectSettings;
 
 export interface BaseMeshSettings {
     posZ?: number;
+    debug?: boolean;
 }
 export interface DrawingMeshSettings extends BaseMeshSettings {
     increaseDetails?: number;

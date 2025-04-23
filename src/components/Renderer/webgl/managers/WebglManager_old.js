@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import MeshManager from './MeshManager';
-import ReactiveParticlesManager from './ReactiveParticlesManager';
+import ReactiveParticlesManager from '../effects/ReactiveParticlesEffect';
 
 export default class WebGLRenderer {
     constructor({ rootElement, options, audioManager, bpmManager }) {

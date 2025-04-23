@@ -1,15 +1,16 @@
-import CubeMesh from "../meshes/CubeMesh";
-import CylinderMesh from "../meshes/CylinderMesh";
-import DrawingMesh from "../meshes/DrawingMesh";
-import TextMesh from "../meshes/TextMesh";
+import { CubeMesh } from '../meshes/CubeMesh';
+import CylinderMesh from '../meshes/CylinderMesh';
+import DrawingMesh from '../meshes/DrawingMesh';
+import TextMesh from '../meshes/TextMesh';
 import TriangleMesh from '../meshes/TriangleMesh';
-import { ExposionEffect } from '../effects/explosion';
-import { MatrixEffect } from '../effects/matrix';
-import { TornadoEffect } from '../effects/tornado';
-import { VortexEffect } from '../effects/vortex';
-import { MorphingEffect } from '../effects/morphing';
-import { BorderEffect } from "../effects/border";
-import CustomMesh from "../meshes/CustomMesh";
+import { ExposionEffect } from '../transitions/explosion';
+import { MatrixEffect } from '../transitions/matrix';
+import { TornadoEffect } from '../transitions/tornado';
+import { VortexEffect } from '../transitions/vortex';
+import { MorphingEffect } from '../transitions/morphing';
+import { BorderEffect } from '../transitions/border';
+import CustomMesh from '../meshes/CustomMesh';
+import { RenderComponentType } from '../../../../api/projects';
 
 const meshes = {
     drawing: () => DrawingMesh,
@@ -17,10 +18,13 @@ const meshes = {
     triangle: () => TriangleMesh,
     cylinder: () => CylinderMesh,
     custom: () => CustomMesh,
-    random: () => { const r = Math.random(); return r < 0.33 ? CubeMesh : r < 0.66 ? CylinderMesh : TriangleMesh; },
+    random: () => {
+        const r = Math.random();
+        return r < 0.33 ? CubeMesh : r < 0.66 ? CylinderMesh : TriangleMesh;
+    },
     text: () => TextMesh,
-    'default': () => CubeMesh
-}
+    default: () => CubeMesh,
+};
 
 const effects = {
     morphing: () => MorphingEffect,
@@ -29,14 +33,19 @@ const effects = {
     tornado: () => TornadoEffect,
     vortex: () => VortexEffect,
     border: () => BorderEffect,
-    random: () => effects[Object.keys(effects)[Math.floor(Math.random() * Object.keys(effects).length)]]()
-}
+    random: () =>
+        effects[
+            Object.keys(effects)[
+                Math.floor(Math.random() * Object.keys(effects).length)
+            ]
+        ](),
+};
 
 export default class MeshManager {
     constructor({ audioManager, options, width, height }) {
         this.audioManager = audioManager;
         this.properties = {
-            ...options
+            ...options,
         };
 
         this.properties.shape = options?.shape ?? 'random';
@@ -46,7 +55,8 @@ export default class MeshManager {
             imageUrl: options.imageUrl,
             imagesSyncUrl: options.imagesSyncUrl,
             drawings: options.drawings,
-            autoMix: (options.autoMix ?? true) || this.properties.shape === 'random',
+            autoMix:
+                (options.autoMix ?? true) || this.properties.shape === 'random',
             autoRotate: options.autoRotate ?? true,
             autoNext: options.autoNext ?? false,
             timerNext: 2000,
@@ -56,8 +66,8 @@ export default class MeshManager {
             animator: options.animator,
             width,
             height,
-            refreshTime: options.refreshTime ?? 24
-        }
+            refreshTime: options.refreshTime ?? 24,
+        };
     }
 
     async init({ containerObject }) {
@@ -67,10 +77,12 @@ export default class MeshManager {
         this.properties.k = 0;
         this.objects = [null, null];
 
-        if ( this.properties.imageUrl ) {
-            this.properties.drawings = [ await (await fetch(this.properties.imageUrl)).json() ];
+        if (this.properties.imageUrl) {
+            this.properties.drawings = [
+                await (await fetch(this.properties.imageUrl)).json(),
+            ];
             await this.nextMesh('drawing');
-        } else if ( this.properties.images ) {
+        } else if (this.properties.images) {
             await this.loadImagesSync(this.properties.images);
         } else {
             await this.nextMesh(this.properties.shape);
@@ -82,30 +94,41 @@ export default class MeshManager {
             this.nextMesh(this.properties.shape);
         }
 
-        if ( this.properties.autoNext && !this.properties.imagesSyncUrl ) {
-            setTimeout(() => this.nextMesh(this.properties.shape), this.properties.timerNext );
-        }        
+        if (this.properties.autoNext && !this.properties.imagesSyncUrl) {
+            setTimeout(
+                () => this.nextMesh(this.properties.shape),
+                this.properties.timerNext
+            );
+        }
     }
 
     async loadImagesSync({ host, list, range }) {
-        if ( !list ) list = [];
+        if (!list) list = [];
         this.properties.drawings = [];
-        if ( range ) {
+        if (range) {
             const interval = range?.interval ?? 10;
             const random = [];
             const min = range.min ?? 0;
             const max = range.max ?? 0;
-            let count = range.count ?? (Math.floor(this.audioManager.audio.buffer.duration / interval));
-            if ( count > max ) count = max;
+            let count =
+                range.count ??
+                Math.floor(this.audioManager.audio.buffer.duration / interval);
+            if (count > max) count = max;
             console.log('Loading ', count, ' pictures');
             for (let i = min; i < count; ++i) {
                 let n = Math.floor(Math.random() * (max - min + 1)) + min;
                 random.push(n);
             }
-            list = random.map( (k, i) => ({ ...(list[i] ?? {}), url: `${k}.json`, start: interval * i } ));
+            list = random.map((k, i) => ({
+                ...(list[i] ?? {}),
+                url: `${k}.json`,
+                start: interval * i,
+            }));
         }
 
-        const promises = list.map( ({ url }) => fetch(host + url).then( res => res.json()));
+        const promises = list.map(({ url }) =>
+            fetch(host + url).then((res) => res.json())
+        );
         this.properties.drawings = await Promise.all(promises);
 
         let index = 0;
@@ -113,47 +136,58 @@ export default class MeshManager {
         setInterval(() => {
             if (!this.audioManager.isPlaying || index >= list.length) return;
             const currentTime = this.audioManager.getCurrentTimeWithOffset();
-            if ( currentTime >= list[index].start ) {
-                console.log("next drawing")
-                this.nextMesh('drawing', { ...this.properties, ...(list[index].opts ?? {}) });
+            if (currentTime >= list[index].start) {
+                console.log('next drawing');
+                this.nextMesh('drawing', {
+                    ...this.properties,
+                    ...(list[index].opts ?? {}),
+                });
                 index++;
             }
         }, 20);
     }
 
-    async nextMesh(shape, options) {
-        if ( !options ) {
+    async nextMesh(shape: RenderComponentType, options) {
+        if (!options) {
             options = this.properties;
         }
-        this.holderObjects.clear();
+        this.holderObjects!.clear();
 
         let MeshCla = meshes[shape]?.();
-        if ( !MeshCla ) MeshCla = meshes.default?.();
+        if (!MeshCla) MeshCla = meshes.default?.();
 
-        let mesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options });
+        let mesh = new MeshCla({
+            audioManager: this.audioManager,
+            containerObject: this.containerObject,
+            options,
+        });
         await mesh.create(this.properties.k);
 
         let effect = null;
-        if ( options.effect ) {
-            effect = new (effects[options.effect]())({ 
+        if (options.effect) {
+            effect = new (effects[options.effect]())({
                 options,
                 points: mesh.getPoints(),
                 vertexColors: mesh.getVertexColors(),
-                containerObject: this.containerObject
+                containerObject: this.containerObject,
             });
         }
 
-        if ( effect?.getType() === 'preload' ) {
+        if (effect?.getType() === 'preload') {
             mesh.add(effect.init());
-        } else if ( mesh.append ) {
+        } else if (mesh.append) {
             mesh.append();
         }
 
-        if ( effect?.getType() === 'transition' ) {
-            if ( this.properties.k > 0 ) {
+        if (effect?.getType() === 'transition') {
+            if (this.properties.k > 0) {
                 const nextContours = mesh.getContours();
 
-                let oldMesh = new MeshCla({ audioManager: this.audioManager, containerObject: this.containerObject, options });
+                let oldMesh = new MeshCla({
+                    audioManager: this.audioManager,
+                    containerObject: this.containerObject,
+                    options,
+                });
                 await oldMesh.create(this.properties.k - 1, nextContours);
                 oldMesh.append();
 
@@ -168,24 +202,30 @@ export default class MeshManager {
         }
 
         this.properties.k++;
-        
+
         mesh?.initPosition();
 
-        this.holderObjects.add(mesh); 
+        this.holderObjects.add(mesh);
 
-        if ( effect && ( effect?.getType() !== 'transition' || this.objects[1] ) ) {
+        if (effect && (effect?.getType() !== 'transition' || this.objects[1])) {
             this._startEffect(effect);
         }
     }
 
     _startEffect(effect) {
-        console.log('starting effect at ', Date.now() - this.properties.perfCheck)
+        console.log(
+            'starting effect at ',
+            Date.now() - this.properties.perfCheck
+        );
         const effectInterval = setInterval(() => {
             effect.animate();
-            if ( effect.isDone() ) {
+            if (effect.isDone()) {
                 clearInterval(effectInterval);
-                console.log('effect done', Date.now() - this.properties.perfCheck)
-                if ( this.objects[1] ) {
+                console.log(
+                    'effect done',
+                    Date.now() - this.properties.perfCheck
+                );
+                if (this.objects[1]) {
                     this.holderObjects?.clear();
                     this.objects[0] = this.objects[1];
                     this.objects[1] = null;
@@ -197,5 +237,5 @@ export default class MeshManager {
 
     update() {
         //
-    }    
+    }
 }
