@@ -109,6 +109,7 @@ export class AudioManager {
                         ''
                     )
                 );
+                this.bufferLength = this.analyser?.data.length ?? 0;
 
                 resolve();
             });

@@ -1,23 +1,23 @@
 import { WebGLRenderer } from '../index';
 import * as THREE from 'three';
 
-export interface MeshProps<T> {
+export interface EffectProps<T> {
     webgl: WebGLRenderer;
     containerObject: THREE.Object3D;
     settings?: T;
 }
 
-export class BaseMesh<T> extends THREE.Object3D {
-    props: MeshProps<T>;
-    material;
+export abstract class BaseEffect<T> extends THREE.Object3D {
+    props: EffectProps<T>;
 
-    constructor(props: MeshProps<T>) {
+    constructor(props: EffectProps<T>) {
         super();
         this.props = props;
-        this.material = (props?.containerObject as any)?.getMaterial?.();
     }
 
     settings() {
         return (this.props?.settings ?? {}) as T;
     }
+
+    abstract update(): void;
 }

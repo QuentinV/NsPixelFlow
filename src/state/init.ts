@@ -1,14 +1,19 @@
 import { createEffect, sample } from 'effector';
 import { $audio, audioManager } from './audio';
-import { Audio, BaseProject, Project, updateProject } from '../api/projects';
+import {
+    Audio,
+    BaseProject,
+    Project,
+    RenderSettings,
+    updateProject,
+} from '../api/projects';
 import { $project } from './projects';
 import { rendererManager } from '../components/Renderer/webgl';
-import { RenderComponent } from '../api/projects';
 import { $render } from './render';
 
 interface SaveEffectParams {
     $audio: Audio | null;
-    $render: RenderComponent[];
+    $render: RenderSettings;
     $project: BaseProject | null;
 }
 
@@ -21,7 +26,6 @@ sample({
                 ...$project,
                 settings: {
                     audio: [$audio],
-                    view: { width: 512, height: 512 },
                     render: $render,
                 },
             };
@@ -34,7 +38,7 @@ sample({
 
 export const playFx = createEffect(async () => {
     await audioManager.play();
-
+    rendererManager.play();
     /*
     const update = ({ audioManager, instances }) => {
         requestAnimationFrame(() => update({ audioManager, instances }))
@@ -45,6 +49,7 @@ export const playFx = createEffect(async () => {
 
 export const pauseFx = createEffect(async () => {
     audioManager.pause();
+    rendererManager.pause();
 });
 
 export const recordFx = createEffect(

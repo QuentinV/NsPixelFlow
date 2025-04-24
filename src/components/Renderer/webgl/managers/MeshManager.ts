@@ -1,16 +1,20 @@
+import * as THREE from 'three';
 import { CubeMesh } from '../meshes/CubeMesh';
-import CylinderMesh from '../meshes/CylinderMesh';
-import DrawingMesh from '../meshes/DrawingMesh';
-import TextMesh from '../meshes/TextMesh';
-import TriangleMesh from '../meshes/TriangleMesh';
+import { CylinderMesh } from '../meshes/CylinderMesh';
+import { DrawingMesh } from '../meshes/DrawingMesh';
+import { TextMesh } from '../meshes/TextMesh';
+import { TriangleMesh } from '../meshes/TriangleMesh';
 import { ExposionEffect } from '../transitions/explosion';
 import { MatrixEffect } from '../transitions/matrix';
 import { TornadoEffect } from '../transitions/tornado';
 import { VortexEffect } from '../transitions/vortex';
 import { MorphingEffect } from '../transitions/morphing';
 import { BorderEffect } from '../transitions/border';
-import CustomMesh from '../meshes/CustomMesh';
-import { RenderComponentType } from '../../../../api/projects';
+import { CustomMesh } from '../meshes/CustomMesh';
+import { RenderComponent } from '../../../../api/projects';
+import { WebGLRenderer } from '..';
+import { ReactiveParticlesEffect } from '../effects/ReactiveParticlesEffect';
+import { BaseEffect } from '../effects/types';
 
 const meshes = {
     drawing: () => DrawingMesh,
@@ -26,58 +30,52 @@ const meshes = {
     default: () => CubeMesh,
 };
 
-const effects = {
+const transitions = {
     morphing: () => MorphingEffect,
     explosion: () => ExposionEffect,
     matrix: () => MatrixEffect,
     tornado: () => TornadoEffect,
     vortex: () => VortexEffect,
     border: () => BorderEffect,
-    random: () =>
+    /*random: () =>
         effects[
             Object.keys(effects)[
                 Math.floor(Math.random() * Object.keys(effects).length)
             ]
-        ](),
+        ](),*/
 };
 
-export default class MeshManager {
-    constructor({ audioManager, options, width, height }) {
-        this.audioManager = audioManager;
-        this.properties = {
-            ...options,
-        };
+const effects = {
+    reactiveParticles: () => ReactiveParticlesEffect,
+};
 
-        this.properties.shape = options?.shape ?? 'random';
+interface MeshManagerProps {
+    webgl: WebGLRenderer;
+    meshes: RenderComponent[];
+}
 
-        this.properties = {
-            ...this.properties,
-            imageUrl: options.imageUrl,
-            imagesSyncUrl: options.imagesSyncUrl,
-            drawings: options.drawings,
-            autoMix:
-                (options.autoMix ?? true) || this.properties.shape === 'random',
-            autoRotate: options.autoRotate ?? true,
-            autoNext: options.autoNext ?? false,
-            timerNext: 2000,
-            keepRotate: options.keepRotate,
-            rotateDuration: options.rotateDuration,
-            effect: options.effect,
-            animator: options.animator,
-            width,
-            height,
-            refreshTime: options.refreshTime ?? 24,
-        };
+export class MeshManager {
+    props: MeshManagerProps;
+    objects: [THREE.Object3D | null, THREE.Object3D | null];
+    index: number;
+    effect?: BaseEffect<unknown>;
+
+    constructor(props: MeshManagerProps) {
+        this.props = props;
+        this.objects = [null, null];
+        this.index = -1;
+
+        // timerNext 2000
+        // refreshTime 24
     }
 
-    async init({ containerObject }) {
-        this.containerObject = containerObject;
-        this.holderObjects = this.containerObject.getHolderObjects();
+    async init() {
+        //this.holderObjects = this.containerObject.getHolderObjects();
 
-        this.properties.k = 0;
+        //this.properties.k = 0;
         this.objects = [null, null];
 
-        if (this.properties.imageUrl) {
+        /*if (this.properties.imageUrl) {
             this.properties.drawings = [
                 await (await fetch(this.properties.imageUrl)).json(),
             ];
@@ -86,9 +84,10 @@ export default class MeshManager {
             await this.loadImagesSync(this.properties.images);
         } else {
             await this.nextMesh(this.properties.shape);
-        }
+        }*/
     }
 
+    /*
     onBPMBeat() {
         if (this.properties.autoMix && Math.random() < 0.1) {
             this.nextMesh(this.properties.shape);
@@ -100,8 +99,9 @@ export default class MeshManager {
                 this.properties.timerNext
             );
         }
-    }
+    }*/
 
+    /*
     async loadImagesSync({ host, list, range }) {
         if (!list) list = [];
         this.properties.drawings = [];
@@ -145,25 +145,40 @@ export default class MeshManager {
                 index++;
             }
         }, 20);
-    }
+    }*/
 
-    async nextMesh(shape: RenderComponentType, options) {
-        if (!options) {
-            options = this.properties;
-        }
-        this.holderObjects!.clear();
+    async nextMesh() {
+        this.props.webgl.holder?.clear();
+        const componentDef = this.props.meshes[++this.index];
 
-        let MeshCla = meshes[shape]?.();
+        let MeshCla = meshes[componentDef.type ?? 'box']?.();
         if (!MeshCla) MeshCla = meshes.default?.();
 
-        let mesh = new MeshCla({
-            audioManager: this.audioManager,
-            containerObject: this.containerObject,
-            options,
-        });
-        await mesh.create(this.properties.k);
+        let effect: any = null;
+        if (componentDef.effects?.length && componentDef.effects?.[0].type) {
+            const EffectCla = effects[componentDef.effects[0].type]();
+            effect = new EffectCla({
+                webgl: this.props.webgl,
+                settings: componentDef.effects[0].settings,
+                containerObject: this.props.webgl.holder!,
+            });
+        }
+        this.effect = effect;
 
-        let effect = null;
+        const container = effect ?? this.props.webgl.holder;
+        const holder = container?.getHolderObjects?.() ?? container;
+
+        let mesh = new MeshCla({
+            webgl: this.props.webgl,
+            containerObject: container,
+            settings: componentDef.settings as any, // FIXME remove any
+        });
+        await mesh.create();
+
+        mesh.initPosition();
+        holder.add(mesh);
+
+        /*let effect = null;
         if (options.effect) {
             effect = new (effects[options.effect]())({
                 options,
@@ -177,8 +192,9 @@ export default class MeshManager {
             mesh.add(effect.init());
         } else if (mesh.append) {
             mesh.append();
-        }
+        }*/
 
+        /*
         if (effect?.getType() === 'transition') {
             if (this.properties.k > 0) {
                 const nextContours = mesh.getContours();
@@ -209,9 +225,10 @@ export default class MeshManager {
 
         if (effect && (effect?.getType() !== 'transition' || this.objects[1])) {
             this._startEffect(effect);
-        }
+        }*/
     }
 
+    /*
     _startEffect(effect) {
         console.log(
             'starting effect at ',
@@ -233,9 +250,9 @@ export default class MeshManager {
                 }
             }
         }, this.properties.refreshTime);
-    }
+    }*/
 
     update() {
-        //
+        this.effect?.update();
     }
 }

@@ -133,7 +133,7 @@ export class DrawingMesh extends BaseMesh<DrawingMeshSettings> {
         });
     }
 
-    create(k, nextContours) {
+    create(k?: number, nextContours?: any) {
         this.material.uniforms.offsetSize.value = Math.floor(30);
         this.material.needsUpdate = true;
         this.colors = this.options.drawings[k].colors;

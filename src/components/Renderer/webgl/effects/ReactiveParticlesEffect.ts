@@ -1,64 +1,72 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
-import vertex from '../entities/glsl/vertex.glsl';
-import fragment from '../entities/glsl/fragment.glsl';
-import { WebGLRenderer } from '../index';
+import vertex from './entities/glsl/vertex.glsl';
+import fragment from './entities/glsl/fragment.glsl';
 import { ReactiveParticlesEffectSetting } from '../../../../api/projects';
+import { BaseEffect, EffectProps } from './types';
 
-export class ReactiveParticlesEffect extends THREE.Object3D {
-    webgl: WebGLRenderer;
+export class ReactiveParticlesEffect extends BaseEffect<ReactiveParticlesEffectSetting> {
     time: number;
-    settings: ReactiveParticlesEffectSetting;
 
     holderObjects?: THREE.Object3D;
     material?: THREE.ShaderMaterial;
 
-    constructor(webgl: WebGLRenderer, opts: ReactiveParticlesEffectSetting) {
-        super();
-        this.webgl = webgl;
+    opts: ReactiveParticlesEffectSetting;
+
+    constructor(props: EffectProps<ReactiveParticlesEffectSetting>) {
+        super(props);
         this.name = 'ReactiveParticlesManager';
         this.time = 0;
 
-        this.settings = {
-            startColor: opts.startColor || 0xffffff,
-            endColor: opts.endColor || 0x00ffff,
-            color: opts.color ?? 'fixed',
-            autoRotate: opts.autoRotate ?? true,
-            maxFreqValue: opts.maxFreqValue ?? 3,
-            animateFrequency: opts.animateFrequency ?? true,
-            animateShadows: opts.animateShadows ?? true,
-            varyingColors: opts.varyingColors ?? false,
-            attenuateNoise: opts.attenuateNoise ?? 1,
-            lineWidth: opts.lineWidth || 1.1,
-            transparent: opts.transparent ?? true,
+        this.opts = {
+            startColor: props.settings?.startColor || 0xffffff,
+            endColor: props.settings?.endColor || 0x00ffff,
+            color: props.settings?.color ?? 'fixed',
+            autoRotate: props.settings?.autoRotate ?? true,
+            maxFreqValue: props.settings?.maxFreqValue ?? 3,
+            animateFrequency: props.settings?.animateFrequency ?? true,
+            animateShadows: props.settings?.animateShadows ?? true,
+            varyingColors: props.settings?.varyingColors ?? false,
+            attenuateNoise: props.settings?.attenuateNoise ?? 1,
+            lineWidth: props.settings?.lineWidth || 1.1,
+            transparent: props.settings?.transparent ?? true,
         };
+
+        this.init();
     }
 
     init() {
         this.holderObjects = new THREE.Object3D();
         this.add(this.holderObjects);
 
+        this.props.containerObject.add(this.holderObjects);
+
         this.material = new THREE.ShaderMaterial({
             side: THREE.DoubleSide,
             vertexShader: vertex,
             fragmentShader: fragment,
-            transparent: this.settings.transparent,
+            transparent: this.opts.transparent,
             uniforms: {
                 time: { value: 0 },
                 offsetSize: { value: 2 },
-                size: { value: this.settings.lineWidth },
-                attenuateNoise: { value: this.settings.attenuateNoise },
-                animateShadows: { value: this.settings.animateShadows },
-                useVaryingColors: { value: this.settings.varyingColors },
+                size: { value: this.opts.lineWidth },
+                attenuateNoise: { value: this.opts.attenuateNoise },
+                animateShadows: { value: this.opts.animateShadows },
+                useVaryingColors: { value: this.opts.varyingColors },
                 frequency: { value: 2 },
                 amplitude: { value: 1 },
                 offsetGain: { value: 0 },
                 maxDistance: { value: 1.8 },
                 startColor: {
-                    value: new THREE.Color(this.settings.startColor),
+                    value: new THREE.Color(this.opts.startColor),
                 },
-                endColor: { value: new THREE.Color(this.settings.endColor) },
+                endColor: { value: new THREE.Color(this.opts.endColor) },
             },
+        });
+
+        this.#bpmManager().addEventListener('beat', () => {
+            console.log('reactive partcle effect bpmManager listner');
+            this.onBPMBeat();
         });
 
         this.updateFrequency();
@@ -73,11 +81,11 @@ export class ReactiveParticlesEffect extends THREE.Object3D {
     }
 
     #audioManager() {
-        return this.webgl.getAudioManager();
+        return this.props.webgl.getAudioManager();
     }
 
     #bpmManager() {
-        return this.webgl.getAudioManager().getBpmManager();
+        return this.props.webgl.getAudioManager().getBpmManager();
     }
 
     onBPMBeat() {
@@ -86,7 +94,7 @@ export class ReactiveParticlesEffect extends THREE.Object3D {
 
         if (this.#audioManager().isPlaying) {
             // Randomly determine whether to rotate the holder object
-            if (Math.random() < 0.3 && this.settings.autoRotate) {
+            if (Math.random() < 0.3 && this.opts.autoRotate) {
                 gsap.to(this.holderObjects!.rotation, {
                     duration: Math.random() < 0.8 ? 15 : duration, // Either a longer or BPM-synced duration
                     // y: Math.random() * Math.PI * 2,
@@ -100,16 +108,13 @@ export class ReactiveParticlesEffect extends THREE.Object3D {
     }
 
     updateFrequency() {
-        if (this.settings.animateFrequency) {
+        if (this.opts.animateFrequency) {
             // Animate the frequency uniform in the material, syncing with BPM if available
             gsap.to(this.material!.uniforms.frequency, {
                 duration: this.#bpmManager()
                     ? (this.#bpmManager().getBPMDuration() / 1000) * 2
                     : 2,
-                value: THREE.MathUtils.randFloat(
-                    0.5,
-                    this.settings.maxFreqValue!
-                ), // Random frequency value for dynamic visual changes
+                value: THREE.MathUtils.randFloat(0.5, this.opts.maxFreqValue!), // Random frequency value for dynamic visual changes
                 ease: 'expo.easeInOut', // Smooth exponential transition for visual effect
             });
         }
@@ -117,7 +122,7 @@ export class ReactiveParticlesEffect extends THREE.Object3D {
 
     update() {
         if (this.#audioManager().isPlaying) {
-            if (this.settings.color === 'autoFull') {
+            if (this.opts.color === 'autoFull') {
                 this.material!.uniforms.startColor.value = new THREE.Color(
                     this.#audioManager().getColor()
                 );

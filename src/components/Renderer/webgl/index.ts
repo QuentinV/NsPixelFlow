@@ -1,6 +1,26 @@
 import * as THREE from 'three';
 import { RenderSettings } from '../../../api/projects';
 import { AudioManager, audioManager } from '../../../state/audio';
+import { MeshManager } from './managers/MeshManager';
+
+class BasicHolder extends THREE.Object3D {
+    material: THREE.ShaderMaterial;
+    constructor() {
+        super();
+        this.name = 'holder';
+        (this as any).sortObjects = false;
+        this.material = new THREE.ShaderMaterial({
+            side: THREE.DoubleSide,
+            transparent: false,
+            uniforms: {
+                offsetSize: { value: 2 },
+            },
+        });
+    }
+    getMaterial() {
+        return this.material;
+    }
+}
 
 export class WebGLRenderer {
     rootElement?: HTMLElement;
@@ -10,9 +30,13 @@ export class WebGLRenderer {
     holder?: THREE.Object3D;
 
     audioManager: AudioManager;
+    meshManager?: MeshManager;
+
+    playing: boolean;
 
     constructor({ audioManager }: { audioManager: AudioManager }) {
         this.audioManager = audioManager;
+        this.playing = false;
     }
 
     init(rootElement: HTMLElement) {
@@ -23,10 +47,8 @@ export class WebGLRenderer {
         this.scene = new THREE.Scene();
         this.scene.add(this.camera);
 
-        this.holder = new THREE.Object3D();
-        this.holder.name = 'holder';
+        this.holder = new BasicHolder();
         this.scene.add(this.holder);
-        (this.holder as any).sortObjects = false;
 
         return {
             holder: this.holder,
@@ -74,13 +96,64 @@ export class WebGLRenderer {
         this.renderer!.setSize(width, height);
     }
 
-    updateState(settings: RenderSettings) {}
+    async updateState(settings: RenderSettings) {
+        this.holder?.clear();
 
-    update() {
-        if (this.renderer && this.scene && this.camera)
-            this.renderer.render(this.scene, this.camera);
-        //this.meshManager?.update();
-        //this.particlesManager?.update();
+        if (!settings.components) return;
+
+        this.meshManager = new MeshManager({
+            meshes: settings.components,
+            webgl: this,
+        });
+
+        await this.meshManager.nextMesh();
+
+        /*
+        
+        this.meshManager = new MeshManager({ audioManager: this.audioManager, options: this.options, width: this.rootElement.clientWidth, height: this.rootElement.clientHeight });
+        this.particlesManager = new ReactiveParticlesManager(this.audioManager, this.bpmManager, this.options)
+
+        this.holder.add(this.particlesManager);
+        */
+
+        /*
+          this.bpmManager.addEventListener('beat', () => { 
+            if (!this.audioManager.isPlaying) {
+                return;
+            }
+            this.meshManager.onBPMBeat();
+            this.particlesManager.onBPMBeat();
+        })
+
+        this.particlesManager.init()
+        await this.meshManager.init({ containerObject: this.particlesManager })
+        */
+
+        this.resize();
+        console.log('webgl state updated');
+    }
+
+    play() {
+        this.playing = true;
+        this.triggerUpdate();
+    }
+
+    pause() {
+        this.playing = false;
+    }
+
+    triggerUpdate() {
+        if (!this.playing) {
+            return;
+        }
+
+        requestAnimationFrame(() => {
+            this.audioManager.update();
+            this.meshManager?.update();
+            this.renderer!.render(this.scene!, this.camera!);
+
+            this.triggerUpdate();
+        });
     }
 
     getRootElement() {
