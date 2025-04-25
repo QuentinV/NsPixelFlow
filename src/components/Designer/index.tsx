@@ -20,7 +20,7 @@ export const Designer: React.FC<DesignerProps> = ({}) => {
                     <Button
                         icon="pi pi-video"
                         label="Record"
-                        onClick={() => recordFx({ duration: 5 })}
+                        onClick={() => recordFx({ duration: 20, fps: 60 })}
                         size="small"
                         loading={recordPending}
                     />

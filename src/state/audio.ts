@@ -40,6 +40,7 @@ export class AudioManager {
 
     listener?: THREE.AudioListener;
     audio?: THREE.Audio;
+    source?: AudioBufferSourceNode;
     analyser?: THREE.AudioAnalyser;
     bufferLength: number;
 
@@ -88,26 +89,27 @@ export class AudioManager {
         if (!this.listener) return;
 
         const listener = this.listener;
+        
         this.audio = new THREE.Audio(listener);
         this.analyser = new THREE.AudioAnalyser(this.audio, 1024);
 
         const clonedBuffer = audioData.slice(0) as ArrayBuffer;
         const audioContext = listener.context;
+        const audioDestination = audioContext.createMediaStreamDestination();
         const audio = this.audio!;
+        
 
         return new Promise((resolve, reject) => {
             audioContext.decodeAudioData(audioData as ArrayBuffer, (buffer) => {
                 audio.setBuffer(buffer);
                 audio.setLoop(false);
                 audio.setVolume(this.settings.volume ?? 1);
-
-                /*
-                 const source = audioContext.createBufferSource();
-                            source.buffer = audioManager.audio?.buffer!; // Set the decoded buffer
-                            source.connect(audioDestination); // Connect to destination
-                            source.connect(audioContext.destination); // Connect to speakers for local playback
-                            //source.start();*/
-
+                
+                this.source = audioContext.createBufferSource();
+                this.source.buffer = buffer;
+                this.source.connect(audioDestination); // Connect to destination
+                this.source.connect(audioContext.destination); // Connect to speakers for local playback
+                
                 this.settings.name = name ?? this.settings.name;
                 this.settings.duration = buffer.duration;
                 this.settings.data = btoa(
@@ -144,19 +146,19 @@ export class AudioManager {
     }
 
     async play() {
-        await this.bpmManager.detectBPM(this.audio?.buffer!);
-        this.audio?.play();
+        await this.bpmManager.detectBPM(this.source?.buffer!);
+        this.source?.start();
         this.isPlaying = true;
     }
 
     pause() {
-        this.audio?.pause();
+        this.source?.stop();
         this.isPlaying = false;
     }
 
     onEnded(callback: () => void) {
-        if (!this.audio) return;
-        this.audio.onEnded = () => {
+        if (!this.source) return;
+        this.source.onended = () => {
             this.isPlaying = false;
             callback?.();
         };
