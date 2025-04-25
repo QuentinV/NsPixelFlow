@@ -101,6 +101,13 @@ export class AudioManager {
                 audio.setLoop(false);
                 audio.setVolume(this.settings.volume ?? 1);
 
+                /*
+                 const source = audioContext.createBufferSource();
+                            source.buffer = audioManager.audio?.buffer!; // Set the decoded buffer
+                            source.connect(audioDestination); // Connect to destination
+                            source.connect(audioContext.destination); // Connect to speakers for local playback
+                            //source.start();*/
+
                 this.settings.name = name ?? this.settings.name;
                 this.settings.duration = buffer.duration;
                 this.settings.data = btoa(

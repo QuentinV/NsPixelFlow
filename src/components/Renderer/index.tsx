@@ -10,6 +10,7 @@ export const Renderer: React.FC = () => {
     useEffect(() => {
         if (!ref.current) return;
         rendererManager.init(ref.current);
+        window.addEventListener('resize', () => rendererManager.resize());
     }, []);
 
     useEffect(() => {

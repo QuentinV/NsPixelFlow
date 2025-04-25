@@ -81,7 +81,7 @@ export class WebGLRenderer {
             0.1,
             10000
         );
-        camera.position.z = 12;
+        camera.position.z = 1;
         camera.frustumCulled = false;
 
         return camera;
@@ -107,27 +107,6 @@ export class WebGLRenderer {
         });
 
         await this.meshManager.nextMesh();
-
-        /*
-        
-        this.meshManager = new MeshManager({ audioManager: this.audioManager, options: this.options, width: this.rootElement.clientWidth, height: this.rootElement.clientHeight });
-        this.particlesManager = new ReactiveParticlesManager(this.audioManager, this.bpmManager, this.options)
-
-        this.holder.add(this.particlesManager);
-        */
-
-        /*
-          this.bpmManager.addEventListener('beat', () => { 
-            if (!this.audioManager.isPlaying) {
-                return;
-            }
-            this.meshManager.onBPMBeat();
-            this.particlesManager.onBPMBeat();
-        })
-
-        this.particlesManager.init()
-        await this.meshManager.init({ containerObject: this.particlesManager })
-        */
 
         this.resize();
         console.log('webgl state updated');

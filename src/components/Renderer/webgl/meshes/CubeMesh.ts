@@ -29,6 +29,7 @@ export class CubeMesh extends BaseMesh<BoxMeshSettings> {
                 settings.depthMax || 80
             )
         );
+
         const geometry = new THREE.BoxGeometry(
             1,
             1,
@@ -67,7 +68,6 @@ export class CubeMesh extends BaseMesh<BoxMeshSettings> {
 
     initPosition() {
         const posZ = this.settings().posZ;
-        console.log('posZ', posZ);
         gsap.to(this.props.containerObject.position, {
             duration: 0.6,
             z: posZ ? posZ * 1.3 : 10, //THREE.MathUtils.randInt(9, 11), // Random depth positioning within a range
