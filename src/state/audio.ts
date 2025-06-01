@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { Audio, Project } from '../api/projects';
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { loadProjectFromStorageFx } from './projects';
-import { data } from 'react-router';
 import { BPMManager, bpmManager } from './bpm';
 
 const noteFrequencies = [

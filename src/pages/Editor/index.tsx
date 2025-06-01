@@ -26,9 +26,15 @@ export const EditorPage = () => {
             <Renderer />
             <Designer />
             <div id="recordProgress">
-                <div className="bg-gray-800 flex p-2 border-1">
-                    <i className="pi pi-spin pi-spinner"></i>
-                    <div id="recordProgressStatus" className="ml-2"></div>
+                <div className="bg-gray-800 p-2 border-1">
+                    <div className="flex justify-items-center">
+                        <i className="pi pi-spin pi-spinner"></i>
+                        <div id="recordProgressStatus" className="ml-2"></div>
+                    </div>
+                    <div
+                        id="recordProgressTime"
+                        className="mt-2 text-center"
+                    ></div>
                 </div>
             </div>
         </div>
