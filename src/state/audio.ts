@@ -40,9 +40,9 @@ export class AudioManager {
 
     listener?: THREE.AudioListener;
     audio?: THREE.Audio;
-    source?: AudioBufferSourceNode;
     analyser?: THREE.AudioAnalyser;
     bufferLength: number;
+    clonedBuffer?: ArrayBuffer;
 
     musicStartTime?: number;
 
@@ -89,31 +89,24 @@ export class AudioManager {
         if (!this.listener) return;
 
         const listener = this.listener;
-        
+
         this.audio = new THREE.Audio(listener);
         this.analyser = new THREE.AudioAnalyser(this.audio, 1024);
 
-        const clonedBuffer = audioData.slice(0) as ArrayBuffer;
+        this.clonedBuffer = audioData.slice(0) as ArrayBuffer;
         const audioContext = listener.context;
-        const audioDestination = audioContext.createMediaStreamDestination();
         const audio = this.audio!;
-        
 
         return new Promise((resolve, reject) => {
             audioContext.decodeAudioData(audioData as ArrayBuffer, (buffer) => {
                 audio.setBuffer(buffer);
                 audio.setLoop(false);
                 audio.setVolume(this.settings.volume ?? 1);
-                
-                this.source = audioContext.createBufferSource();
-                this.source.buffer = buffer;
-                this.source.connect(audioDestination); // Connect to destination
-                this.source.connect(audioContext.destination); // Connect to speakers for local playback
-                
+
                 this.settings.name = name ?? this.settings.name;
                 this.settings.duration = buffer.duration;
                 this.settings.data = btoa(
-                    new Uint8Array(clonedBuffer).reduce(
+                    new Uint8Array(this.clonedBuffer!).reduce(
                         (acc, val) => (acc += String.fromCharCode(val)),
                         ''
                     )
@@ -123,6 +116,10 @@ export class AudioManager {
                 resolve();
             });
         });
+    }
+
+    getClonedBuffer(): ArrayBuffer | undefined {
+        return this.clonedBuffer?.slice(0);
     }
 
     #base64ToArrayBuffer(base64: string): ArrayBuffer {
@@ -146,19 +143,19 @@ export class AudioManager {
     }
 
     async play() {
-        await this.bpmManager.detectBPM(this.source?.buffer!);
-        this.source?.start();
+        await this.bpmManager.detectBPM(this.audio?.buffer!);
+        this.audio?.play();
         this.isPlaying = true;
     }
 
     pause() {
-        this.source?.stop();
+        this.audio?.pause();
         this.isPlaying = false;
     }
 
     onEnded(callback: () => void) {
-        if (!this.source) return;
-        this.source.onended = () => {
+        if (!this.audio) return;
+        this.audio.onEnded = () => {
             this.isPlaying = false;
             callback?.();
         };

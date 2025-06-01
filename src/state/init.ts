@@ -61,6 +61,14 @@ export const recordFx = createEffect(
         duration?: number;
         fps?: number;
     }): Promise<void> => {
+        const progressElem = document.getElementById('recordProgress')!;
+        const progressStatusElem = document.getElementById(
+            'recordProgressStatus'
+        )!;
+
+        progressStatusElem.innerText = 'Initialize recording';
+        progressElem.style.display = 'flex';
+
         const canvas = rendererManager
             .getRootElement()
             ?.querySelector('canvas');
@@ -70,76 +78,56 @@ export const recordFx = createEffect(
             return;
         }
 
-        console.log('canvas', canvas, fps);
+        progressStatusElem.innerText = 'Initialize canvas capture';
         const videoStream = canvas.captureStream(fps);
 
         const stream = new MediaStream();
         stream.addTrack(videoStream.getVideoTracks()[0]);
 
         // Add audio tracks to the stream
-        const audioContext = audioManager.getListener()?.context;
-        if (audioContext) {
-            const audioDestination =
-                audioContext.createMediaStreamDestination();
-            const source = audioContext.createBufferSource();
-            source.buffer = audioManager.audio?.buffer!; // Set the decoded buffer
-            source.connect(audioDestination); // Connect to destination
-            source.connect(audioContext.destination); // Connect to speakers for local playback
-            source.start();
+        progressStatusElem.innerText = 'Loading audio buffer';
+        const audioBuffer = audioManager.getClonedBuffer();
+        if (audioBuffer) {
+            const audioCtx = new AudioContext();
+            const audioDestination = audioCtx.createMediaStreamDestination();
+
+            const decodedData: AudioBuffer = await new Promise((res) => {
+                audioCtx.decodeAudioData(audioBuffer, (decodedData) => {
+                    const source = audioCtx.createBufferSource();
+                    source.buffer = decodedData;
+                    source.connect(audioDestination);
+                    source.start();
+                    res(decodedData);
+                });
+            });
+
+            if (!duration) {
+                duration = decodedData.duration;
+            }
 
             audioDestination.stream.getAudioTracks().forEach((track) => {
                 stream.addTrack(track);
             });
-            if (!duration) {
-                duration = audioManager.settings.duration;
-            }
         }
 
-        console.log(stream);
-
-        /*const recorder = new MediaRecorder(stream, {
-            mimeType: 'video/mp4', //; codecs=vp9',
-        });*/
-        let recorder = new RecordRTCPromisesHandler(stream, {
+        const recorder = new RecordRTCPromisesHandler(stream, {
             type: 'video',
             mimeType: 'video/webm;codecs=vp9',
         });
 
-        /*const recordedChunks: Blob[] = [];
-        recorder.ondataavailable = (event) => {
-            console.log('record datqsdqsda', event);
-            if (event.data.size > 0) {
-                console.log('record data');
-                recordedChunks.push(event.data);
-            }
-        };
-
-        recorder.onerror = (event) => console.log('error', event);
-
-        recorder.onstop = () => {
-            const blob = new Blob(recordedChunks, { type: 'video/mp4' });
-            const url = URL.createObjectURL(blob);
-
-            // auto download the video
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'recorded-video.mp4';
-            document.body.appendChild(a);
-            a.click();
-            URL.revokeObjectURL(url);
-        };
-
-        console.log('Starting recording duration = ', duration);
-        recorder.start();*/
         recorder.startRecording();
+        progressStatusElem.innerText = 'Recording in progress please wait';
 
         const sleep = (s: number) => new Promise((r) => setTimeout(r, s));
         await sleep((duration ?? 0) * 1000);
 
-        console.log('Stopping recording');
         await recorder.stopRecording();
+
+        progressStatusElem.innerText = 'Recording completed';
 
         let blob = await recorder.getBlob();
         invokeSaveAsDialog(blob);
+
+        progressElem.style.display = 'none';
     }
 );

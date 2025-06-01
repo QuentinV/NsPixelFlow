@@ -25,6 +25,12 @@ export const EditorPage = () => {
         <div className="w-full h-full">
             <Renderer />
             <Designer />
+            <div id="recordProgress">
+                <div className="bg-gray-800 flex p-2 border-1">
+                    <i className="pi pi-spin pi-spinner"></i>
+                    <div id="recordProgressStatus" className="ml-2"></div>
+                </div>
+            </div>
         </div>
     );
 };
