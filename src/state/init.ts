@@ -142,7 +142,7 @@ export const recordFx = attach({
                 });
 
                 if (!duration) {
-                    duration = decodedData.duration;
+                    duration = Math.ceil(decodedData.duration);
                 }
 
                 audioDestination.stream.getAudioTracks().forEach((track) => {

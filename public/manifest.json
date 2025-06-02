@@ -3,12 +3,12 @@
   "name": "NsPixelFlow",
   "icons": [
     {
-      "src": "/nspixelflow/logo-192x192.png",
+      "src": "/NsPixelFlow/logo-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/nspixelflow/logo-512x512.png",
+      "src": "/NsPixelFlow/logo-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

@@ -2,7 +2,7 @@
   "name": "nspixelflow",
   "version": "0.0.1",
   "private": true,
-  "homepage": "https://quentinv.github.io/nspixelflow",
+  "homepage": "https://quentinv.github.io/NsPixelFlow",
   "dependencies": {},
   "scripts": {
     "start": "vite",

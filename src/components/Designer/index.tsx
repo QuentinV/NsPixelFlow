@@ -5,6 +5,7 @@ import { pauseFx, playFx, recordFx } from '../../state/init';
 import { AudioSettings } from './AudioSettings';
 import { RenderSettings } from './RenderSettings';
 import { useUnit } from 'effector-react';
+import { $audio } from '../../state/audio';
 
 interface DesignerProps {}
 
@@ -12,15 +13,16 @@ export const Designer: React.FC<DesignerProps> = ({}) => {
     const recordPending = useUnit(recordFx.pending);
     const playPending = useUnit(playFx.pending);
     const pausePending = useUnit(pauseFx.pending);
+    const audio = useUnit($audio);
     return (
         <div className="designer">
             <div className="flex gap-4">
-                <div>Duration</div>
+                <div>Duration: {audio?.duration?.toFixed(2) ?? 0}s</div>
                 <div className="ml-auto flex gap-2">
                     <Button
                         icon="pi pi-video"
                         label="Record"
-                        onClick={() => recordFx({ duration: 20, fps: 60 })}
+                        onClick={() => recordFx({ fps: 60 })}
                         size="small"
                         loading={recordPending}
                     />
