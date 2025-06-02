@@ -1,0 +1,10 @@
+.designer {
+    position: fixed;
+    width: 90%;
+    height: 180px;
+    left: 5%;
+    bottom: 2%;
+    overflow: auto;
+    padding: 0.5rem;
+    z-index: 10;
+}
