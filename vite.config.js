@@ -7,9 +7,16 @@ export default defineConfig({
   build: {
     outDir: 'dist'
   },
+   optimizeDeps: {
+    exclude: ["@ffmpeg/ffmpeg", "@ffmpeg/util"],
+  },
   server: {
     host: true,
-    port: 3000
+    port: 3000,
+    headers: {
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp",
+    },
   },
   plugins: [glslify()],
 })

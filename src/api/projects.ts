@@ -15,12 +15,24 @@ export interface BaseProject {
 export interface Settings {
     render?: RenderSettings;
     audio?: Audio[];
+    encoder?: {
+        [encoderName: string]: any; // BaseEncoderSettings
+    };
+}
+
+export interface BaseEncoderSettings {
+    fps?: number;
+    mimeType?: string;
+    codecs?: string;
+}
+
+export interface FFmpegEncoderSettings extends BaseEncoderSettings {
+    preset?: 'ultrafast' | 'slow';
 }
 
 export interface RenderSettings {
     width?: number;
     height?: number;
-    fps?: number;
     background?: { color?: string; image?: string };
     autoMix?: boolean;
     components?: RenderComponent[];

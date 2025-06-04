@@ -33,10 +33,14 @@ export class WebGLRenderer {
     meshManager?: MeshManager;
 
     playing: boolean;
+    recording: boolean;
+
+    frames?: string[];
 
     constructor({ audioManager }: { audioManager: AudioManager }) {
         this.audioManager = audioManager;
         this.playing = false;
+        this.recording = false;
     }
 
     init(rootElement: HTMLElement) {
@@ -131,7 +135,25 @@ export class WebGLRenderer {
             this.meshManager?.update();
             this.renderer!.render(this.scene!, this.camera!);
 
+            if (this.recording) {
+                const url = this.renderer!.domElement.toDataURL();
+                this.frames?.push(url);
+            }
+
             this.triggerUpdate();
+        });
+    }
+
+    record(time: number): Promise<string[]> {
+        this.recording = true;
+        this.frames = [];
+        return new Promise((res, rej) => {
+            setTimeout(() => {
+                this.recording = false;
+                const frames = this.frames;
+                this.frames = [];
+                res(frames!);
+            }, time * 1000);
         });
     }
 
