@@ -257,6 +257,7 @@ const recordWithFfmpeg = async ({
         throw e;
     }
 
+    console.log('frames', frames.length);
     updateStatus('Write frames');
     for (let i = 0; i < frames.length; i++) {
         await ffmpeg.writeFile(`frame${i}.png`, await fetchFile(frames[i]));
