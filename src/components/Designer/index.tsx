@@ -22,7 +22,9 @@ export const Designer: React.FC<DesignerProps> = ({}) => {
                     <Button
                         icon="pi pi-video"
                         label="Record"
-                        onClick={() => recordFx({ fps: 60 })}
+                        onClick={() =>
+                            recordFx({ fps: 60, recordType: 'ffmpeg' })
+                        }
                         size="small"
                         loading={recordPending}
                     />

@@ -26,9 +26,13 @@ export interface AudioSettings extends Audio {
 
 export class AudioManager {
     settings: Audio;
-    frequencyArray?: Uint8Array<ArrayBufferLike>;
+    frequencies?: number[][];
+    frequencyArray?: number[];
     frequencyData: { low: number; mid: number; high: number };
     isPlaying: boolean;
+
+    startTime?: number;
+    elapsedTime?: number;
 
     lowFrequency: number;
     midFrequency: number;
@@ -39,8 +43,6 @@ export class AudioManager {
 
     listener?: THREE.AudioListener;
     audio?: THREE.Audio;
-    analyser?: THREE.AudioAnalyser;
-    bufferLength: number;
     clonedBuffer?: ArrayBuffer;
 
     musicStartTime?: number;
@@ -61,7 +63,6 @@ export class AudioManager {
         this.highFrequency = 9000; //2000Hz to 20000Hz
         this.smoothedLowFrequency = 0;
         this.color = 'blue';
-        this.bufferLength = 0;
 
         this.listener = new THREE.AudioListener();
         this.bpmManager = bpmManager;
@@ -90,7 +91,6 @@ export class AudioManager {
         const listener = this.listener;
 
         this.audio = new THREE.Audio(listener);
-        this.analyser = new THREE.AudioAnalyser(this.audio, 1024);
 
         this.clonedBuffer = audioData.slice(0) as ArrayBuffer;
         const audioContext = listener.context;
@@ -98,21 +98,24 @@ export class AudioManager {
 
         return new Promise((resolve, reject) => {
             audioContext.decodeAudioData(audioData as ArrayBuffer, (buffer) => {
-                audio.setBuffer(buffer);
-                audio.setLoop(false);
-                audio.setVolume(this.settings.volume ?? 1);
+                this.collectFullAudioData(buffer).then((freqs) => {
+                    this.frequencies = freqs;
 
-                this.settings.name = name ?? this.settings.name;
-                this.settings.duration = buffer.duration;
-                this.settings.data = btoa(
-                    new Uint8Array(this.clonedBuffer!).reduce(
-                        (acc, val) => (acc += String.fromCharCode(val)),
-                        ''
-                    )
-                );
-                this.bufferLength = this.analyser?.data.length ?? 0;
+                    audio.setBuffer(buffer);
+                    audio.setLoop(false);
+                    audio.setVolume(this.settings.volume ?? 1);
 
-                resolve();
+                    this.settings.name = name ?? this.settings.name;
+                    this.settings.duration = buffer.duration;
+                    this.settings.data = btoa(
+                        new Uint8Array(this.clonedBuffer!).reduce(
+                            (acc, val) => (acc += String.fromCharCode(val)),
+                            ''
+                        )
+                    );
+
+                    resolve();
+                });
             });
         });
     }
@@ -145,6 +148,7 @@ export class AudioManager {
         await this.bpmManager.detectBPM(this.audio?.buffer!);
         this.audio?.play();
         this.isPlaying = true;
+        this.startTime = Date.now();
     }
 
     pause() {
@@ -160,31 +164,69 @@ export class AudioManager {
         };
     }
 
+    async collectFullAudioData(audioBuffer: AudioBuffer) {
+        const offlineContext = new OfflineAudioContext(
+            1,
+            audioBuffer.length,
+            audioBuffer.sampleRate
+        );
+
+        const analyser = offlineContext.createAnalyser();
+        analyser.fftSize = 1000;
+
+        const source = offlineContext.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(analyser);
+        analyser.connect(offlineContext.destination);
+
+        const fullData = [];
+
+        source.start();
+        await offlineContext.startRendering(); // Process the full buffer instantly
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(dataArray);
+        fullData.push([...dataArray]);
+
+        return fullData;
+    }
+
     collectAudioData() {
-        this.frequencyArray = this.analyser?.getFrequencyData();
+        if (!this.frequencies) return;
+
+        const elapsedTime =
+            this.elapsedTime ??
+            this.audio!.context.currentTime - this.startTime!;
+        const frameIndex = Math.floor(elapsedTime * 60); // Convert time to frame index
+
+        const currentFrequencies = this.frequencies[frameIndex];
+        console.log(currentFrequencies);
+        this.frequencyArray = currentFrequencies;
     }
 
     analyzeFrequency() {
         const sampleRate = this.listener?.context.sampleRate;
         if (sampleRate === undefined) return;
 
+        const bufferLength = this.frequencyArray?.length ?? 0;
+
         // Calculate the average frequency value for each range of frequencies
         const lowFreqRangeStart = Math.floor(
-            (this.lowFrequency * this.bufferLength) / sampleRate
+            (this.lowFrequency * bufferLength) / sampleRate
         );
         const lowFreqRangeEnd = Math.floor(
-            (this.midFrequency * this.bufferLength) / sampleRate
+            (this.midFrequency * bufferLength) / sampleRate
         );
         const midFreqRangeStart = Math.floor(
-            (this.midFrequency * this.bufferLength) / sampleRate
+            (this.midFrequency * bufferLength) / sampleRate
         );
         const midFreqRangeEnd = Math.floor(
-            (this.highFrequency * this.bufferLength) / sampleRate
+            (this.highFrequency * bufferLength) / sampleRate
         );
         const highFreqRangeStart = Math.floor(
-            (this.highFrequency * this.bufferLength) / sampleRate
+            (this.highFrequency * bufferLength) / sampleRate
         );
-        const highFreqRangeEnd = this.bufferLength - 1;
+        const highFreqRangeEnd = bufferLength - 1;
 
         const lowAvg = this.#normalizeValue(
             this.#calculateAverage(
@@ -215,11 +257,7 @@ export class AudioManager {
         };
     }
 
-    #calculateAverage(
-        array: Uint8Array<ArrayBufferLike>,
-        start: number,
-        end: number
-    ) {
+    #calculateAverage(array: number[], start: number, end: number) {
         let sum = 0;
         for (let i = start; i <= end; i++) {
             sum += array[i];

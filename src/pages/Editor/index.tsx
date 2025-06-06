@@ -31,10 +31,6 @@ export const EditorPage = () => {
                         <i className="pi pi-spin pi-spinner"></i>
                         <div id="recordProgressStatus" className="ml-2"></div>
                     </div>
-                    <div
-                        id="recordProgressTime"
-                        className="mt-2 text-center"
-                    ></div>
                 </div>
             </div>
         </div>
